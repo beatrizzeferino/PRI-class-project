@@ -193,6 +193,13 @@ class UMinhoDSpace8Scraper:
                         else:
                             data[key] = field_value
 
+            # Attempt to find the document link (if available)
+            docLink = self.driver.find_elements(By.CSS_SELECTOR, "a.btn.overflow-ellipsis.mb-1[title^='Download:']")
+            if docLink:
+                data["document_link"] = docLink[0].get_attribute("href")
+            else:
+                data["document_link"] = "N/A"
+
         except Exception as e:
             print(f"Error parsing table: {e}")
 
