@@ -2,6 +2,7 @@ import time
 import os
 import platform
 import shutil
+import json
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -121,7 +122,7 @@ def find_chrome_executable():
 
 
 class UMinhoDSpace8Scraper:
-    def __init__(self, base_url, max_items=10):
+    def __init__(self, base_url, max_items=10, output_file='scraper_results.json'):
         """
         Initialize the web scraper with Selenium WebDriver configuration.
         Args:
@@ -133,6 +134,7 @@ class UMinhoDSpace8Scraper:
             https://googlechromelabs.github.io/chrome-for-testing/#stable
         """
         self.base_url = base_url
+        self.output_file = output_file
         chrome_options = Options()
 
         # Try to find Chrome in default installation locations
@@ -151,9 +153,26 @@ class UMinhoDSpace8Scraper:
         self.wait = WebDriverWait(self.driver, 10)
 
         # Time to wait for Angular to settle after page loads
-        self.ANGULAR_SETTLE_TIME = 0.5  # seconds
+        self.ANGULAR_SETTLE_TIME = 2.0  # seconds
         # Max items to scrape
         self.MAX_ITEMS = max_items
+
+    def load_existing_data(self):
+        """Loads existing documents to avoid duplicates."""
+        if os.path.exists(self.output_file):
+            try:
+                with open(self.output_file, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except:
+                return []
+        return []
+    
+    def save_incremental(self, paper_info):
+        """Saves the document immediatly."""
+        data = self.load_existing_data()
+        data.append(paper_info)
+        with open(self.output_file, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
 
     def get_paper_info(self, url):
         """
@@ -174,7 +193,7 @@ class UMinhoDSpace8Scraper:
             "dc.description.abstract": "abstract"
         }
 
-        data = { "title": "N/A", "year": "N/A", "doi": "N/A", "abstract": "N/A", "authors": [] }
+        data = { "title": "N/A", "year": "N/A", "doi": "N/A", "abstract": "N/A", "authors": [], "url": url }
 
         try:
             # Locate all rows in the metadata table
@@ -199,11 +218,11 @@ class UMinhoDSpace8Scraper:
                 data["document_link"] = docLink[0].get_attribute("href")
             else:
                 data["document_link"] = "N/A"
+            return data
 
         except Exception as e:
             print(f"Error parsing table: {e}")
-
-        return data
+            return None
 
     def go_to_next_page(self):
         """
@@ -304,17 +323,25 @@ class UMinhoDSpace8Scraper:
         try:
 
             # Collect paper links across paginated collection
+            existing_urls = [d['url'].replace('/full', '') for d in self.load_existing_data()]
             paper_urls = self.collect_all_links()
 
             print(f"Found {len(paper_urls)} papers. Extracting metadata...") # Debug print
 
             # Visit each paper to get the abstract and authors
             for url in paper_urls:
+                if url in existing_urls:
+                    print(f"Skipping (Already exists): {url}")
+                    continue
+                print(f"Processing [{len(results)+len(existing_urls)+1}/{self.MAX_ITEMS}]: {url}")
                 # print(f"   Opening Paper: {url}")               # Debug print
-                full_url = url + "/full"                        # add '/full' to get the full metadata view
-                paper_info = self.get_paper_info(full_url)      # get the paper info
-                print(f"      Title: {paper_info['title']}")    # Debug print
-                results.append(paper_info)
+                full_url = url + "/full"   
+                paper_info = self.get_paper_info(full_url) # get the paper info
+
+                if full_url: 
+                    self.save_incremental(paper_info)                    # add '/full' to get the full metadata view
+                    print(f"      Title: {paper_info['title']}")    # Debug print
+                    results.append(paper_info)
 
         finally:
             self.driver.quit()
