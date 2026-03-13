@@ -5,7 +5,7 @@ def main():
     # Example collection:  https://repositorium.uminho.pt/collections/690f7814-a67b-4f27-8fff-6b33581d1a91/search
     # https://repositorium.uminho.pt/handle/1822/21293
     repo_url = f"https://repositorium.uminho.pt/handle/"
-    collection = "1822/21293"
+    collection = "1822/14397"
     base_url = f"{repo_url}/{collection}"
 
     # Create an instance of the Scraper class
