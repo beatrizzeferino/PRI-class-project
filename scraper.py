@@ -122,7 +122,7 @@ def find_chrome_executable():
 
 
 class UMinhoDSpace8Scraper:
-    def __init__(self, base_url, max_items=10, output_file='scraper_results.json'):
+    def __init__(self, base_url, max_items, output_file):
         """
         Initialize the web scraper with Selenium WebDriver configuration.
         Args:
@@ -144,6 +144,7 @@ class UMinhoDSpace8Scraper:
             raise FileNotFoundError("Chrome executable not found. Please install Chrome or provide a portable version.")
 
         chrome_options.binary_location = chrome_path
+        #trabalha sem abrir uma janela visivel
         chrome_options.add_argument('--headless')
         chrome_options.add_argument('--no-sandbox')
         chrome_options.add_argument('--disable-dev-shm-usage')
@@ -153,10 +154,14 @@ class UMinhoDSpace8Scraper:
         self.wait = WebDriverWait(self.driver, 10)
 
         # Time to wait for Angular to settle after page loads
+        #Garante que o bot não sobrecarrega o servidor
         self.ANGULAR_SETTLE_TIME = 2.0  # seconds
         # Max items to scrape
         self.MAX_ITEMS = max_items
 
+        # Guarda os dados do json em memoria RAM
+        self.all_data = []
+    #Procura o ficheiro e devolve a lista do que esta la, caso nao exista devolve uma lista vazia
     def load_existing_data(self):
         """Loads existing documents to avoid duplicates."""
         if os.path.exists(self.output_file):
@@ -167,63 +172,92 @@ class UMinhoDSpace8Scraper:
                 return []
         return []
     
-    def save_incremental(self, paper_info):
-        """Saves the document immediatly."""
-        data = self.load_existing_data()
-        data.append(paper_info)
+    def save_incremental(self):
+        """Saves the document in json."""
+    
+        #guarda a lista no json
         with open(self.output_file, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
+            json.dump(self.all_data, f, ensure_ascii=False, indent=4)
 
-    def get_paper_info(self, url):
+    def get_paper_info(self, url, max_retries=3):
         """
-        Given a paper URL, navigates to it and extracts metadata from the table.
+        Navega para a página principal para o PDF e depois para os metadados.
         """
-        self.driver.get(url)
-        # Wait for the table to appear
-        self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "table.table-striped")))
-        time.sleep(self.ANGULAR_SETTLE_TIME) # Angular settle time
+        # Garante que não temos o /full duplicado no URL base
+        base_url = url.replace('/full', '')
+        
+        for attempt in range(max_retries):
+            try:
+                # --- Procura o pdf ---
+                self.driver.get(base_url)
+                
+                doc_link = "N/A"
+                try:
+                    self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "a[href*='/bitstreams/']")))
+        
+                    # Tentamos encontrar o link pelo href ou pelo título "Ver/Abrir" 
+                    pdf_elements = self.driver.find_elements(By.CSS_SELECTOR, "a[href*='/bitstreams/'], a[title*='Ver/Abrir'], a.btn.overflow-ellipsis")
+                    
+                    for el in pdf_elements:
+                        href = el.get_attribute("href")
+                        if href and "/bitstreams/" in href:
+                            # Tornar link absoluto
+                            doc_link = href if href.startswith("http") else "https://repositorium.uminho.pt" + href
+                            print(f"      [Success] PDF Link captured!")
+                            break # Encontrámos o primeiro, podemos sair
 
-        # Dictionary to store the mapping we want
-        # This is our "Shopping List" - Key: what the HTML says, Value: what we want in our JSON
-        targets = {
-            "dc.title": "title",
-            "dc.date.issued": "year",
-            "dc.identifier.doi": "doi",
-            "dc.contributor.author": "authors",
-            "dc.description.abstract": "abstract"
-        }
+                except Exception:
+                    # Se mesmo assim falhar, tentamos  procurar por texto ".pdf"
+                    try:
+                        fallback = self.driver.find_element(By.PARTIAL_LINK_TEXT, ".pdf")
+                        doc_link = fallback.get_attribute("href")
+                        print(f"      [Success] PDF Link found via fallback text!")
+                    except:
+                        print(f"      [Info] PDF link really not found or restricted.")
 
-        data = { "title": "N/A", "year": "N/A", "doi": "N/A", "abstract": "N/A", "authors": [], "url": url }
+                # --- Procura DE METADADOS ---
+                full_metadata_url = base_url + "/full"
+                self.driver.get(full_metadata_url)
+                
+                # Esperamos por qualquer tabela ou pela div de metadados
+                self.wait.until(EC.presence_of_element_located((By.TAG_NAME, "table")))
+                time.sleep(self.ANGULAR_SETTLE_TIME)
 
-        try:
-            # Locate all rows in the metadata table
-            rows = self.driver.find_elements(By.CSS_SELECTOR, "table.table-striped tbody tr")
+                data = { "title": "N/A", "year": "N/A", "doi": "N/A", "abstract": "N/A", "authors": [], "url": base_url }
 
-            for row in rows:
-                cols = row.find_elements(By.TAG_NAME, "td")
-                if len(cols) >= 2:
-                    field_label = cols[0].text.strip()
-                    field_value = cols[1].text.strip()
+                # Procura a tabela de metadados
+                rows = self.driver.find_elements(By.CSS_SELECTOR, "table tbody tr")
+                
+                targets = {
+                    "dc.title": "title",
+                    "dc.date.issued": "year",
+                    "dc.identifier.doi": "doi",
+                    "dc.contributor.author": "authors",
+                    "dc.description.abstract": "abstract"
+                }
 
-                    if field_label in targets:
-                        key = targets[field_label]
-                        if key == "authors":
-                            data[key].append(field_value)
-                        else:
-                            data[key] = field_value
+                for row in rows:
+                    cols = row.find_elements(By.TAG_NAME, "td")
+                    if len(cols) >= 2:
+                        label = cols[0].text.strip()
+                        value = cols[1].text.strip()
+                        if label in targets:
+                            key = targets[label]
+                            if key == "authors":
+                                data[key].append(value)
+                            else:
+                                data[key] = value
 
-            # Attempt to find the document link (if available)
-            docLink = self.driver.find_elements(By.CSS_SELECTOR, "a.btn.overflow-ellipsis.mb-1[title^='Download:']")
-            if docLink:
-                data["document_link"] = docLink[0].get_attribute("href")
-            else:
-                data["document_link"] = "N/A"
-            return data
+                data["document_link"] = doc_link
+                return data
 
-        except Exception as e:
-            print(f"Error parsing table: {e}")
-            return None
-
+            except Exception as e:
+                print(f"      [Attempt {attempt + 1}] Error: {str(e)[:100]}") 
+                if attempt < max_retries - 1:
+                    time.sleep(3)
+                else:
+                    return None
+                
     def go_to_next_page(self):
         """
         Attempts to click the next page button.
@@ -321,28 +355,34 @@ class UMinhoDSpace8Scraper:
         print(f"Loading collection list: {self.base_url}") # Debug print
 
         try:
+            #le o ficheiro json
+            self.all_data = self.load_existing_data()
 
             # Collect paper links across paginated collection
-            existing_urls = [d['url'].replace('/full', '') for d in self.load_existing_data()]
+            existing_urls = [d['url'].replace('/full', '') for d in self.all_data]
             paper_urls = self.collect_all_links()
 
             print(f"Found {len(paper_urls)} papers. Extracting metadata...") # Debug print
 
-            # Visit each paper to get the abstract and authors
-            for url in paper_urls:
+            for i, url in enumerate(paper_urls):
+                # Visit each paper to get the abstract and authors
                 if url in existing_urls:
                     print(f"Skipping (Already exists): {url}")
                     continue
                 print(f"Processing [{len(results)+len(existing_urls)+1}/{self.MAX_ITEMS}]: {url}")
                 # print(f"   Opening Paper: {url}")               # Debug print
-                full_url = url + "/full"   
-                paper_info = self.get_paper_info(full_url) # get the paper info
-
+                #full_url = url + "/full"   
+                paper_info = self.get_paper_info(url) # get the paper info
                 if paper_info: 
-                    self.save_incremental(paper_info)                    # add '/full' to get the full metadata view
+                    self.all_data.append(paper_info)  
+                    results.append(paper_info)                 # add '/full' to get the full metadata view
                     print(f"      Title: {paper_info['title']}")    # Debug print
-                    results.append(paper_info)
-
+                    
+                    # guarda a lista no json a cada 20 artigos para tornar o processo não muito lento
+                    if len(results)%20==0 or i == len(paper_urls)-1:
+                        print("Saving articles in json")
+                        self.save_incremental()
+                        
         finally:
             self.driver.quit()
 
