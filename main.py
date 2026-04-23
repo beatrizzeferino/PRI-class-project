@@ -1,6 +1,6 @@
 import json
 import time
-from scraper import UMinhoDSpace8Scraper
+from src.scraper.scraper import UMinhoDSpace8Scraper
 
 def load_config(config_path="config.json"):
     """Lê as configurações do ficheiro JSON."""
