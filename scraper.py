@@ -183,13 +183,11 @@ class UMinhoDSpace8Scraper:
         """
         Navega para a página principal para o PDF e depois para os metadados.
         """
-        # Garante que não temos o /full duplicado no URL base
-        base_url = url.replace('/full', '')
         
         for attempt in range(max_retries):
             try:
                 # --- Procura o pdf ---
-                self.driver.get(base_url)
+                self.driver.get(url)
                 
                 doc_link = "N/A"
                 try:
@@ -216,14 +214,14 @@ class UMinhoDSpace8Scraper:
                         print(f"      [Info] PDF link really not found or restricted.")
 
                 # --- Procura DE METADADOS ---
-                full_metadata_url = base_url + "/full"
+                full_metadata_url = url + "/full"
                 self.driver.get(full_metadata_url)
                 
                 # Esperamos por qualquer tabela ou pela div de metadados
                 self.wait.until(EC.presence_of_element_located((By.TAG_NAME, "table")))
                 time.sleep(self.ANGULAR_SETTLE_TIME)
 
-                data = { "title": "N/A", "year": "N/A", "doi": "N/A", "abstract": "N/A", "authors": [], "url": base_url }
+                data = { "title": "N/A", "year": "N/A", "doi": "N/A", "abstract": "N/A", "authors": [], "url": url,"keywords": [],"relations":[] }
 
                 # Procura a tabela de metadados
                 rows = self.driver.find_elements(By.CSS_SELECTOR, "table tbody tr")
@@ -233,7 +231,9 @@ class UMinhoDSpace8Scraper:
                     "dc.date.issued": "year",
                     "dc.identifier.doi": "doi",
                     "dc.contributor.author": "authors",
-                    "dc.description.abstract": "abstract"
+                    "dc.relation": "relations",
+                    "dc.description.abstract": "abstract",
+                    "dc.subject": "keywords"
                 }
 
                 for row in rows:
@@ -243,7 +243,7 @@ class UMinhoDSpace8Scraper:
                         value = cols[1].text.strip()
                         if label in targets:
                             key = targets[label]
-                            if key == "authors":
+                            if key in ["authors", "keywords", "relations"]:
                                 data[key].append(value)
                             else:
                                 data[key] = value
@@ -373,13 +373,12 @@ class UMinhoDSpace8Scraper:
                     print(f"Skipping (Already exists): {url}")
                     continue
                 print(f"Processing [{len(results)+len(existing_urls)+1}/{self.MAX_ITEMS}]: {url}")
-                # print(f"   Opening Paper: {url}")               # Debug print
-                #full_url = url + "/full"   
+                  
                 paper_info = self.get_paper_info(url) # get the paper info
                 if paper_info: 
                     self.all_data.append(paper_info)  
-                    results.append(paper_info)                 # add '/full' to get the full metadata view
-                    print(f"      Title: {paper_info['title']}")    # Debug print
+                    results.append(paper_info)                
+                    print(f"      Title: {paper_info['title']}")  
                     
                     # guarda a lista no json a cada 20 artigos para tornar o processo não muito lento
                     if len(results)%20==0 or i == len(paper_urls)-1:

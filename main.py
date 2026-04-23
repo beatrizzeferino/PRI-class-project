@@ -13,9 +13,9 @@ def load_config(config_path="config.json"):
     
 def main():
     config = load_config()
-
+    url=f"{config['repo_url']}/{config['collection']}"
     if config:
-        print(f"A extrair URL: {config['base_url']}")
+        print(f"A extrair URL: {url}")
         print(f"Limite de artigos: {config['max_items']}")
 
         start_time = time.time()
@@ -23,7 +23,7 @@ def main():
     # Create an instance of the Scraper class
     # The scraper will automatically detect Chrome in default locations
     scraper_instance = UMinhoDSpace8Scraper(
-        base_url = config['base_url'],
+        base_url = url,
         max_items= config['max_items'],
         output_file= config['output_file'])
     
