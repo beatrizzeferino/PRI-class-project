@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados - RepositóriUM</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="results-header">
+        <div class="header-content">
+            <h2 class="mini-logo" onclick="window.location.href='index.html'">Repositóri<span>UM</span></h2>
+            <form action="results.html" class="search-box-top">
+                <input type="text" name="query" value="Processamento de Linguagem Natural">
+                <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </form>
+        </div>
+    </header>
+
+    <div class="results-layout">
+        <aside class="filters-sidebar">
+            <h3>Filtros</h3>
+            
+            <div class="filter-group">
+                <label>Algoritmo de Ordenação [cite: 58]</label>
+                <select>
+                    <option>TF-IDF Personalizado</option>
+                    <option>Scikit-Learn</option>
+                    <option>Booleano</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Processamento [cite: 57]</label>
+                <div class="checkbox-item"><input type="checkbox" checked> Stemming</div>
+                <div class="checkbox-item"><input type="checkbox"> Lematização</div>
+                <div class="checkbox-item"><input type="checkbox" checked> Stop Words</div>
+            </div>
+
+            <div class="filter-group">
+                <label>Ano de Publicação: <span id="year-display">2000 - 2026</span></label>
+                <div class="range-slider-container">
+                    <input type="range" min="2000" max="2026" value="2000" id="year-min" class="slider">
+                    <input type="range" min="2000" max="2026" value="2026" id="year-max" class="slider">
+                </div>
+            </div>
+
+            <div class="edu-box">
+                <small><i class="fa-solid fa-circle-info"></i> O score representa a similaridade do cosseno entre a sua query e o documento. [cite: 62]</small>
+            </div>
+        </aside>
+
+        <main class="results-main">
+            <p class="results-count">A carregar resultados do RepositóriUM...</p>
+            
+            <section class="results-list">
+                <article class="result-card">
+                    <span class="score-badge">Score: 0.98</span>
+                    <h3 class="result-title"><a href="#">Exemplo de Tese de Mestrado em Engenharia Informática</a></h3>
+                    <p class="result-authors">Apelido, Nome., Santos, M.</p>
+                    <p class="result-snippet">Este resumo (abstract) será preenchido com os dados recolhidos pelo scraper.py desenvolvido para o DSpace 8...</p>
+                    <div class="result-footer">
+                        <span><i class="fa-regular fa-calendar"></i> 2024</span>
+                        <a href="#" class="pdf-link"><i class="fa-solid fa-file-pdf"></i> PDF Full Text</a>
+                    </div>
+                </article>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const minSlider = document.getElementById('year-min');
+        const maxSlider = document.getElementById('year-max');
+        const display = document.getElementById('year-display');
+
+        function updateYears() {
+            let v1 = parseInt(minSlider.value);
+            let v2 = parseInt(maxSlider.value);
+            if (v1 > v2) [v1, v2] = [v2, v1];
+            display.innerText = `${v1} - ${v2}`;
+        }
+
+        minSlider.oninput = updateYears;
+        maxSlider.oninput = updateYears;
+    </script>
+</body>
+</html>
