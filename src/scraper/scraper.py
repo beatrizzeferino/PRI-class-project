@@ -221,7 +221,7 @@ class UMinhoDSpace8Scraper:
                 self.wait.until(EC.presence_of_element_located((By.TAG_NAME, "table")))
                 time.sleep(self.ANGULAR_SETTLE_TIME)
 
-                data = { "title": "N/A", "year": "N/A", "doi": "N/A", "abstract": "N/A", "authors": [], "url": url,"keywords": [],"relations":[] }
+                data = { "title": "N/A", "year": "N/A", "doi": "N/A", "abstract": "N/A", "authors": [], "url": url,"keywords": [],"relations":[], "language":"N/A" }
 
                 # Procura a tabela de metadados
                 rows = self.driver.find_elements(By.CSS_SELECTOR, "table tbody tr")
@@ -233,7 +233,8 @@ class UMinhoDSpace8Scraper:
                     "dc.contributor.author": "authors",
                     "dc.relation": "relations",
                     "dc.description.abstract": "abstract",
-                    "dc.subject": "keywords"
+                    "dc.subject": "keywords",
+                    "dc.language.iso":"language"
                 }
 
                 for row in rows:
