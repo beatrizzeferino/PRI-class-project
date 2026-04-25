@@ -1,6 +1,6 @@
 {
     "repo_url": "https://repositorium.uminho.pt/handle",
     "collection": "1822/14395",
-    "max_items": 10,
+    "max_items": 100,
     "output_file": "scraper_results.json"
 }
