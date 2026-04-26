@@ -1,6 +1,7 @@
 import json
 import time
 from src.scraper.scraper import UMinhoDSpace8Scraper
+from src.scraper.extrair_pdfs import add_texto_scraper
 from src.search.indexer import Indexer
 
 def load_config(config_path="config.json"):
@@ -29,6 +30,15 @@ def main():
         output_file= config['output_file'])
     
     final_results = scraper_instance.scrape()
+
+    print("\nA iniciar a extração de texto dos pdfs.")
+    add_texto_scraper(
+        scraper_file=config["output_file"],
+        output_file=config["output_file"],
+        limite=20
+    )
+    print("\nExtração de PDFs concluída.")
+    
     end_time = time.time()
     tempo_total= round((end_time-start_time)/60,2)
 
