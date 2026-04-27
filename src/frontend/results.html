@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resultados - RepositóriUM</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <header class="results-header">
         <div class="header-content">
             <h2 class="mini-logo" onclick="window.location.href='index.html'">Repositóri<span>UM</span></h2>
-            <form action="results.html" class="search-box-top">
+            <form action="results.html" class="search-box-top" onsubmit="search(event)">
                 <input type="text" name="query" value="Processamento de Linguagem Natural">
                 <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
             </form>
@@ -22,14 +22,11 @@
         <aside class="filters-sidebar">
             <h3>Filtros</h3>
             
-            <div class="filter-group">
-                <label>Algoritmo de Ordenação [cite: 58]</label>
-                <select>
-                    <option>TF-IDF Personalizado</option>
-                    <option>Scikit-Learn</option>
-                    <option>Booleano</option>
-                </select>
-            </div>
+            <select id="algorithm">
+                <option value="tfidf_custom">TF-IDF Personalizado</option>
+                <option value="sklearn">Scikit-Learn</option>
+                <option value="boolean">Booleano</option>
+            </select>
 
             <div class="filter-group">
                 <label>Processamento [cite: 57]</label>
@@ -54,22 +51,14 @@
         <main class="results-main">
             <p class="results-count">A carregar resultados do RepositóriUM...</p>
             
-            <section class="results-list">
-                <article class="result-card">
-                    <span class="score-badge">Score: 0.98</span>
-                    <h3 class="result-title"><a href="#">Exemplo de Tese de Mestrado em Engenharia Informática</a></h3>
-                    <p class="result-authors">Apelido, Nome., Santos, M.</p>
-                    <p class="result-snippet">Este resumo (abstract) será preenchido com os dados recolhidos pelo scraper.py desenvolvido para o DSpace 8...</p>
-                    <div class="result-footer">
-                        <span><i class="fa-regular fa-calendar"></i> 2024</span>
-                        <a href="#" class="pdf-link"><i class="fa-solid fa-file-pdf"></i> PDF Full Text</a>
-                    </div>
-                </article>
+            <section  id = "results-list"class="results-list">
+                
             </section>
         </main>
     </div>
 
     <script>
+        // 1. Lógica Visual: Barra de Intervalo de Anos
         const minSlider = document.getElementById('year-min');
         const maxSlider = document.getElementById('year-max');
         const display = document.getElementById('year-display');
@@ -83,6 +72,87 @@
 
         minSlider.oninput = updateYears;
         maxSlider.oninput = updateYears;
+
+        // 2. Lógica de Pesquisa e API
+        
+        // Captura os elementos uma única vez
+        const resultsContainer = document.getElementById("results-list");
+        const countElem = document.querySelector('.results-count');
+
+        // LER PARÂMETROS DA URL (Executado ao abrir a página)
+        const urlParams = new URLSearchParams(window.location.search);
+        const queryParam = urlParams.get('query');
+        const methodParam = urlParams.get('method');
+
+        // Se a página abrir com query na URL (vinda da index), pesquisa logo
+        if (queryParam) {
+            document.querySelector('input[name="query"]').value = queryParam;
+            if(methodParam) document.getElementById("algorithm").value = methodParam;
+            performSearch(queryParam, methodParam || "tfidf_custom");
+        }
+
+        // Função que vai buscar os dados à API Python
+        async function performSearch(query, method) {
+            countElem.innerText = "A pesquisar no RepositóriUM...";
+            resultsContainer.innerHTML = ""; 
+
+            try {
+                // Chamada do servidor FastAPI (app.py)
+                const response = await fetch(`http://127.0.0.1:8000/search?query=${encodeURIComponent(query)}&method=${method}`);
+                const data = await response.json();
+                
+                const results = data.results;
+                countElem.innerText = `Encontrados ${results.length} resultados para "${query}"`;
+
+                if (results.length === 0) {
+                    resultsContainer.innerHTML = "<p>Nenhum resultado encontrado.</p>";
+                    return;
+                }
+
+                results.forEach(item => {
+                    const card = `
+                        <article class="result-card">
+                            <span class="score-badge">Score: ${item.score ? item.score.toFixed(2) : 'N/A'}</span>
+                            <h3 class="result-title"><a href="${item.url}" target="_blank">${item.title}</a></h3>
+                            <p class="result-authors">${Array.isArray(item.authors) ? item.authors.join(", ") : item.authors}</p>
+                            <p class="result-snippet">${item.abstract || 'Sem resumo disponível.'}</p>
+                            <div class="result-footer">
+                                <span><i class="fa-regular fa-calendar"></i> ${item.year || 'N/A'}</span>
+                                <a href="${item.document_link}" class="pdf-link" target="_blank"><i class="fa-solid fa-file-pdf"></i> PDF Full Text</a>
+                            </div>
+                        </article>
+                    `;
+                    resultsContainer.innerHTML += card;
+                });
+            } catch (error) {
+                countElem.innerText = "Erro ao ligar à API. Certifica-te que o servidor FastAPI (app.py) está a correr.";
+                console.error("Erro na API:", error);
+            }
+        }
+
+        // Função chamada pelo formulário da própria página de resultados
+        function search(event) {
+            event.preventDefault();
+            const query = document.querySelector('input[name="query"]').value;
+            const method = document.getElementById("algorithm").value;
+            performSearch(query, method);
+        }
+
+        // Faz a pesquisa automaticamente quando mudas o algoritmo no menu lateral
+        document.getElementById("algorithm").addEventListener("change", function() {
+            const query = document.querySelector('input[name="query"]').value;
+            const method = this.value;
+            performSearch(query, method);
+        });
+
+        // Faz a pesquisa automaticamente quando mudas os filtros de processamento (opcional)
+        document.querySelectorAll('.checkbox-item input').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const query = document.querySelector('input[name="query"]').value;
+                const method = document.getElementById("algorithm").value;
+                performSearch(query, method);
+            });
+        });
     </script>
 </body>
 </html>

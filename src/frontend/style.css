@@ -63,6 +63,20 @@ body {
     font-weight: bold;
     cursor: pointer;
 }
+/* Estilo para o dropdown dentro da barra de pesquisa */
+.algo-select-home {
+    border: none;
+    background: transparent;
+    color: #666;
+    padding: 0 10px;
+    font-size: 0.9rem;
+    outline: none;
+    cursor: pointer;
+    border-left: 1px solid #ddd;
+    margin-right: 10px;
+}
+
+.algo-select-home:hover { color: var(--primary-black); }
 
 .quick-links { margin-top: 20px; font-size: 0.9rem; }
 .quick-links a { color: var(--primary-red); text-decoration: none; margin-left: 10px; }
