@@ -28,7 +28,13 @@ def add_texto_scraper(scraper_file, output_file, limite):
     with open(scraper_file, "r", encoding="utf-8") as f:
         scraper= json.load(f)
     
-    count =0
+    n_pdfs_extraidos = sum(1 for doc in scraper if doc.get("pdf_txt") is not None)
+
+    if n_pdfs_extraidos >= limite:
+        print("Já foram previamente extraidos 20 pdfs.")
+        return
+
+    count = n_pdfs_extraidos
     i=0
     while i< len(scraper) and count <limite:
         doc= scraper[i]
