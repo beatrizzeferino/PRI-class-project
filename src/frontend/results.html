@@ -3,18 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resultados - RepositóriUM</title>
+    <title>Resultados - RepositórioUM</title>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <header class="results-header">
         <div class="header-content">
-            <h2 class="mini-logo" onclick="window.location.href='index.html'">Repositóri<span>UM</span></h2>
-            <form action="results.html" class="search-box-top" onsubmit="search(event)">
+            <h2 class="mini-logo" onclick="window.location.href='/'">Repositório<span>UM</span></h2>
+            <form action="/" class="search-box-top" onsubmit="search(event)">
                 <input type="text" name="query" value="Processamento de Linguagem Natural">
-                <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <button type="submit">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
             </form>
+            <i class="fa-solid fa-circle-info search-info-icon"
+            title="Pode usar operadores booleanos: AND, OR, NOT&#10;Ex: machine AND learning NOT deep">
+            </i>
         </div>
     </header>
 
@@ -22,11 +27,17 @@
         <aside class="filters-sidebar">
             <h3>Filtros</h3>
             
-            <select id="algorithm">
-                <option value="tfidf_custom">TF-IDF Personalizado</option>
-                <option value="sklearn">Scikit-Learn</option>
-                <option value="boolean">Booleano</option>
-            </select>
+           <div style="display: flex; align-items: center; gap: 6px;">
+                <select id="algorithm">
+                    <option value="tfidf_custom">TF-IDF Personalizado</option>
+                    <option value="sklearn">Scikit-Learn</option>
+                    <option value="boolean">Booleano</option>
+                </select>
+
+                <i class="fa-solid fa-circle-info"
+                title="TF-IDF → relevância por frequência de termos&#10;Scikit-Learn → implementação otimizada&#10;Booleano → usa AND, OR, NOT">
+                </i>
+            </div>
 
             <div class="filter-group">
                 <label>Processamento [cite: 57]</label>
@@ -36,10 +47,10 @@
             </div>
 
             <div class="filter-group">
-                <label>Ano de Publicação: <span id="year-display">2000 - 2026</span></label>
+                <label>Ano de Publicação: <span id="year-display">1950 - 2026</span></label>
                 <div class="range-slider-container">
-                    <input type="range" min="2000" max="2026" value="2000" id="year-min" class="slider">
-                    <input type="range" min="2000" max="2026" value="2026" id="year-max" class="slider">
+                    <input type="range" min="1950" max="2026" value="1950" id="year-min" class="slider">
+                    <input type="range" min="1950" max="2026" value="2026" id="year-max" class="slider">
                 </div>
             </div>
 
@@ -51,7 +62,7 @@
         <main class="results-main">
             <p class="results-count">A carregar resultados do RepositóriUM...</p>
             
-            <section  id = "results-list"class="results-list">
+            <section id="results-list" class="results-list">
                 
             </section>
         </main>
@@ -91,44 +102,83 @@
             performSearch(queryParam, methodParam || "tfidf_custom");
         }
 
-        // Função que vai buscar os dados à API Python
-        async function performSearch(query, method) {
-            countElem.innerText = "A pesquisar no RepositóriUM...";
-            resultsContainer.innerHTML = ""; 
+    // Função que vai buscar os dados à API Python
+    async function performSearch(query, method) {
+        // 1. Captura os elementos do DOM
+        const resultsContainer = document.getElementById("results-list");
+        const countElem = document.querySelector('.results-count');
+        const yearMin = document.getElementById('year-min').value;
+        const yearMax = document.getElementById('year-max').value;
 
-            try {
-                // Chamada do servidor FastAPI (app.py)
-                const response = await fetch(`http://127.0.0.1:8000/search?query=${encodeURIComponent(query)}&method=${method}`);
-                const data = await response.json();
-                
-                const results = data.results;
-                countElem.innerText = `Encontrados ${results.length} resultados para "${query}"`;
+        // Feedback visual enquanto carrega
+        resultsContainer.innerHTML = "<p>A carregar resultados...</p>";
 
-                if (results.length === 0) {
-                    resultsContainer.innerHTML = "<p>Nenhum resultado encontrado.</p>";
-                    return;
+        try {
+            // 2. Faz o pedido à API com todos os parâmetros
+            const response = await fetch(`http://127.0.0.1:8000/search?query=${encodeURIComponent(query)}&method=${method}&year_min=${yearMin}&year_max=${yearMax}`);
+            const data = await response.json();
+
+            // 3. Limpa o contentor de resultados
+            resultsContainer.innerHTML = "";
+
+            // 4. Verifica se há resultados
+            if (!data.results || data.results.length === 0) {
+                countElem.innerText = `0 resultados encontrados para "${query}"`;
+                resultsContainer.innerHTML = "<div class='no-results'>Nenhum documento encontrado para os filtros selecionados.</div>";
+                return;
+            }
+
+            // 5. Atualiza o contador
+            countElem.innerText = `Encontrados ${data.results.length} resultados`;
+
+            // 6. Itera sobre os resultados e cria os cartões (Cards)
+            data.results.forEach(item => {
+                // Garantir que autores é uma string legível
+                let authorsStr = "Autores desconhecidos";
+                if (item.authors) {
+                    authorsStr = Array.isArray(item.authors) ? item.authors.join(", ") : item.authors;
                 }
 
-                results.forEach(item => {
-                    const card = `
-                        <article class="result-card">
-                            <span class="score-badge">Score: ${item.score ? item.score.toFixed(2) : 'N/A'}</span>
-                            <h3 class="result-title"><a href="${item.url}" target="_blank">${item.title}</a></h3>
-                            <p class="result-authors">${Array.isArray(item.authors) ? item.authors.join(", ") : item.authors}</p>
-                            <p class="result-snippet">${item.abstract || 'Sem resumo disponível.'}</p>
-                            <div class="result-footer">
-                                <span><i class="fa-regular fa-calendar"></i> ${item.year || 'N/A'}</span>
-                                <a href="${item.document_link}" class="pdf-link" target="_blank"><i class="fa-solid fa-file-pdf"></i> PDF Full Text</a>
-                            </div>
-                        </article>
-                    `;
-                    resultsContainer.innerHTML += card;
-                });
-            } catch (error) {
-                countElem.innerText = "Erro ao ligar à API. Certifica-te que o servidor FastAPI (app.py) está a correr.";
-                console.error("Erro na API:", error);
-            }
+                // Criar o template do card
+                const card = `
+                    <article class="result-card">
+                        <span class="score-badge">Score: ${item.score ? item.score.toFixed(2) : '1.0'}</span>
+                        <h3 class="result-title">
+                            <a href="${item.url || '#'}" target="_blank">${item.title || 'Sem título'}</a>
+                        </h3>
+                        <p class="result-authors">${authorsStr}</p>
+                        <p class="result-snippet">${item.abstract ? item.abstract.substring(0, 300) + '...' : 'Sem resumo disponível.'}</p>
+                        <div class="result-footer">
+                            <span><i class="fa-regular fa-calendar"></i> ${item.year || 'N/A'}</span>
+                            <a href="${item.document_link || '#'}" class="pdf-link" target="_blank">
+                                <i class="fa-solid fa-file-pdf"></i> PDF Full Text
+                            </a>
+                        </div>
+                    </article>
+                `;
+                
+                // Inserir no container
+                resultsContainer.innerHTML += card;
+            });
+
+        } catch (error) {
+            console.error("Erro na pesquisa:", error);
+            resultsContainer.innerHTML = "<p style='color:red'>Erro ao ligar ao servidor. Verifica se o app.py está a correr.</p>";
         }
+    }
+
+        // Fazer pesquisa automática ao largar o slider (evento 'change')
+        minSlider.addEventListener('change', () => {
+            const query = document.querySelector('input[name="query"]').value;
+            const method = document.getElementById("algorithm").value;
+            performSearch(query, method);
+        });
+
+        maxSlider.addEventListener('change', () => {
+            const query = document.querySelector('input[name="query"]').value;
+            const method = document.getElementById("algorithm").value;
+            performSearch(query, method);
+        });
 
         // Função chamada pelo formulário da própria página de resultados
         function search(event) {

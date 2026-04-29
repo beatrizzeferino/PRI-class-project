@@ -73,6 +73,7 @@ class modeloBooleano:
             self.matriz.append(linha)
 
         print(f"Matriz termo-documento construída: {len(self.termos_unicos)} termos x {len(self.documentos)} documentos.")
+        print(self.termos_unicos)
 
 
 #=========== Resoluções de Querys ===============================================0

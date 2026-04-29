@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
+from src.search.booleano import modeloBooleano
 app = FastAPI()
 
 app.add_middleware(
@@ -19,7 +20,8 @@ FRONTEND_PATH = BASE_DIR / "src" / "frontend"
 DATA_PATH = BASE_DIR / "scraper_results.json"
 app.mount("/static", StaticFiles(directory=FRONTEND_PATH), name="static")
 
-
+modelo_bool = modeloBooleano()
+modelo_bool.construir_matriz(str(DATA_PATH))
 AVAILABLE_METHODS = ["tfidf_custom", "sklearn", "boolean"]
 
 # --------- LOAD DATA ---------
@@ -59,13 +61,27 @@ def sklearn_search(query: str):
         r["score"] = 0.88
     return results[:10]
 
-def boolean_search(query: str):
-    query_l = query.lower()
-    # Simula lógica booleana (score fixo 1.0)
-    results = [doc for doc in data if query_l in doc.get("title", "").lower()]
-    for r in results:
-        r["score"] = 1.0
-    return results
+
+def boolean_search(query: str) -> List[Dict]:
+    """Lógica exclusiva para o modelo Booleano"""
+    if not query.strip():
+        return []
+    
+    try:
+        # Chama a função avaliar_query do ficheiro booleano.py
+        resultado_binario = modelo_bool.avaliar_query(query)
+        
+        # Converte o vetor de bits nos documentos reais do JSON
+        results = []
+        for i, bit in enumerate(resultado_binario):
+            if bit == 1:
+                doc = data[i].copy()
+                doc["score"] = 1.0  # Score binário
+                results.append(doc)
+        return results
+    except Exception as e:
+        print(f"Erro no motor booleano: {e}")
+        return []
 
 # --------- ALGORITHM ROUTER ---------
 METHOD_MAP = {
@@ -84,35 +100,45 @@ def run_algorithm(query: str, method: str):
 @app.get("/search")
 def search(
     query: str = Query(...),
-    method: str = Query("tfidf_custom")
+    method: str = Query("tfidf_custom"),
+    year_min: int = Query(1950),
+    year_max: int = Query(2026)
 ):
-    query_lower = query.lower()
+    search_func = METHOD_MAP.get(method, tfidf_custom_search)
+    base_results = search_func(query)
     
-    # 1. Filtra os dados reais do ficheiro JSON (armazenados em 'data')
-    # Procura no título ou no resumo
-    filtered_results = [
-        item for item in data 
-        if query_lower in item.get("title", "").lower() 
-        or query_lower in item.get("abstract", "").lower()
-    ]
+    final_results = []
+    for doc in base_results:
+        raw_year = doc.get("year", "0")
+        doc_year = 0
 
-    # 2. Atribui scores diferentes baseados no método (Simulação para já)
-    results = []
-    for doc in filtered_results:
-        doc_copy = doc.copy()
-        if method == "tfidf_custom":
-            doc_copy["score"] = 0.92  # Aqui entrará a lógica do teu tfidf.py
-        elif method == "boolean":
-            doc_copy["score"] = 1.0
+        if raw_year:
+            # 1. Se for lista, pega o primeiro elemento
+            if isinstance(raw_year, list) and len(raw_year) > 0:
+                raw_year = str(raw_year[0])
+            else:
+                raw_year = str(raw_year)
+
+            # 2. Limpeza: Manter apenas os números
+            digits_only = "".join(filter(str.isdigit, raw_year))
+            
+            # 3. CORREÇÃO CRUCIAL: Se tivermos uma data completa (ex: 20251125),
+            # pegamos apenas nos primeiros 4 dígitos para ter o ano.
+            if len(digits_only) >= 4:
+                doc_year = int(digits_only[:4])
+            elif digits_only:
+                doc_year = int(digits_only)
+
+        # 4. Filtro com o ano já corrigido
+        if doc_year == 0 or (year_min <= doc_year <= year_max):
+            final_results.append(doc)
         else:
-            doc_copy["score"] = 0.85
-        results.append(doc_copy)
+            print(f"DEBUG: Cortado - Ano {doc_year} fora do range {year_min}-{year_max}")
 
-    # 3. Retorna os resultados reais
     return {
         "query": query,
         "method": method,
-        "results": results[:20]  # Limita aos primeiros 20 para performance
+        "results": final_results[:50]
     }
 # --------- DOCUMENT ---------
 @app.get("/document/{doc_id}")
