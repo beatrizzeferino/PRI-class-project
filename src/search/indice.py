@@ -314,7 +314,6 @@ if __name__ == "__main__":
     indice.guardar("indice_invertido.json")
 
     # 6. Demonstração de atualização incremental
-    # (simulação — na prática viria do scraper)
     novos_docs = indexer.processar_dataset(
         "scraper_results.json",
         remove_stopwords=True,
