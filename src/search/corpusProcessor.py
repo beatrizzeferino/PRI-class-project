@@ -16,10 +16,19 @@ class CorpusProcessor:
 
         print(f"[Processador de corpus] A processar {len(documentos_brutos)} documentos...")
 
+        doc_counter=0
         for doc in documentos_brutos:
-            doc_id = doc.get('doi')
-            if not doc_id:
-                continue
+            base_id = doc.get('doi')
+
+            if not base_id: #tratar dos casos onde o documento não tem doi associado
+                base_id = f"doc_{doc_counter}"
+                doc_counter += 1
+
+            doc_id = base_id
+
+            if doc_id in self.documentos_processados: #para o caso de haver dois ou mais documentos com o mesmo doi, o identificador fica por exempo doi_1, doi_2,...
+                doc_id = f"{base_id}_{doc_counter}"
+                doc_counter += 1
 
             iso_lang = doc.get('language', 'en').lower()
             lang_para_nlp = 'portuguese' if 'por' in iso_lang else 'english'

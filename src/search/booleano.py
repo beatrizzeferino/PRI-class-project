@@ -7,8 +7,10 @@ class ModeloBooleano:
         self.corpus= corpus_processado #output do corpusProcessor
 
         self.termos_unicos= [] #lista ordenada de termos (linhas)
-        self.documentos=[] #lista de dois dos documentos (colunas)
+        self.doc_ids=[] #lista dos doc_ids que vem do dicionario do CorpusProcessor, corresponde ao id de cada um dos documentos (colunas)
         self.matriz= [] #matriz termos-documentos
+
+        
 
         self.termo_indice={}
 
@@ -27,18 +29,18 @@ class ModeloBooleano:
 
         self.nlp = TextProcessor()
     
-    def construir_matriz(self, output_file):
+    def construir_matriz(self):
         '''
         Constroi a matriz termo documento, esta corresponde a uma lista de listas, onde cada lista interna corresponde ao vetor
         de um termo único e indica se este existe num documento, 1, ou se não existe no documento, 0
         '''
         termos= set()
         docs_tokens=[] #cada elemento da lista corresponde ao conjunto de tokens existente em cada documento
+        self.doc_ids=[] #para o caso de corrermos esta funcao varias vezes, no inicio os docs_ids estao vazios
+        self.termo_indice={}
 
-        self.documentos = list(self.corpus.keys())
-
-        for doi in self.documentos:
-            doc = self.corpus[doi]
+        for doc_id, doc in self.corpus.items():
+            self.doc_ids.append(doc_id)
 
             tokens= doc["tokens_pesquisa"]
             tokens_set= set(tokens)
@@ -51,7 +53,7 @@ class ModeloBooleano:
         for i, termo in enumerate(self.termos_unicos):
             self.termo_indice[termo]= i
 
-        num_docs= len(self.documentos)
+        num_docs= len(self.doc_ids)
         num_termos= len(self.termos_unicos)
 
         #inicializar matriz
@@ -63,7 +65,7 @@ class ModeloBooleano:
                 termo_indice = self.termo_indice[termo]
                 self.matriz[termo_indice][doc_indice] = 1
 
-        print(f"Matriz termo-documento construída: {len(self.termos_unicos)} termos x {len(self.documentos)} documentos.")
+        print(f"Matriz termo-documento construída: {len(self.termos_unicos)} termos x {len(self.doc_ids)} documentos.")
 
 
 #=========== Resoluções de Querys ===============================================
@@ -79,7 +81,7 @@ class ModeloBooleano:
         )
 
         if not tokens:
-            return [0] * len(self.documentos)
+            return [0] * len(self.doc_ids)
 
         termo_proc = tokens[0]
     
@@ -88,7 +90,7 @@ class ModeloBooleano:
         if indice is not None:
             return self.matriz[indice]
 
-        return [0] * len(self.documentos)
+        return [0] * len(self.doc_ids)
     
     
     def operacao_and(self, linha_termo1, linha_termo2):
@@ -97,7 +99,6 @@ class ModeloBooleano:
         '''
         return [a & b for a, b in zip(linha_termo1, linha_termo2)]
    
-    ####################nao sei se na vdd isto esta a fazer grande coisa porque tem de comparar todos na mesma, mas tambem nao posso usar posting lists pois isso corresponde ao do indice invertido, so fiz isto pois era um dos requisitos
     def operacao_and_otimizado(self, lista_vetores):
         """Operação AND otimizada, para que sejam comparados primeiro os vetores dos termos que aparecem em menos documentos"""
         vetores_ordenados = sorted(lista_vetores, key= lambda x: sum(x)) #soma todos os 1 dos vetores fazendo com que termos que aparecem em menos documentos aparecam primeiro
@@ -212,33 +213,15 @@ class ModeloBooleano:
     
     def executar_pesquisa(self, query):
         '''
-        Executa a query e devolve os dois dos documentos encontrados (optamos por devolver o doi, pois este serve como um identificador único do documento)
+        Executa a query e devolve os titulos dos documentos encontrados 
         '''
         resultado_binario = self.avaliar_query(query)
 
         docs_res= []
         for i, bit in enumerate(resultado_binario):
             if bit ==1:
-                docs_res.append(self.documentos[i])
+                doc_id = self.doc_ids[i]
+                titulo = self.corpus[doc_id]["titulo"]
+                docs_res.append(titulo)
         
         return docs_res
-    
-'''
-        
-if __name__ == "__main__":
-    remover_sw= input("Deseja remover Stop Words? (s/n)").lower() == 's'
-
-    print("\nMétodo de Normalização:")
-    print("1. Lematização (Mais preciso)")
-    print("2. Stemming (Mais rápido)")
-    print("3. Nenhum (Mantém palavras originais)")
-    escolha_norm = input("Escolha (1/2/3): ")
-
-    mapping = {'1': 'lemma', '2': 'stem', '3': None}
-    metodo_norm = mapping.get(escolha_norm, None)
-
-    idioma = input("Idioma (english/portuguese): ").lower()
-    
-    modelo = ModeloBooleano(remove_stopwords= remover_sw, normalization_method=metodo_norm, language=idioma)
-    caminho_scraper="../../scraper_results.json"
-    modelo.construir_matriz(caminho_scraper)'''
