@@ -46,6 +46,13 @@ class IndiceInvertido:
         self.documentos = {}   # doc_id -> metadados
         self.num_documentos = 0
 
+    def reset_total(self):
+        """Limpa todos os dados da memória para um novo começo."""
+        self.indice = {}
+        self.documentos = {}
+        self.num_documentos = 0
+        print("[Reset] Todos os dados foram limpos da memória.")
+
     # ------------------------------------------------------------------ #
     #  Construção                                                          #
     # ------------------------------------------------------------------ #
@@ -237,7 +244,6 @@ class IndiceInvertido:
         """
         dados_finais = {
             "num_documentos": self.num_documentos,
-            "documentos": self.documentos,   # <-- CORREÇÃO: estava em falta
             "indice": {
                 termo: {
                     "df":       pl.df,
@@ -259,7 +265,6 @@ class IndiceInvertido:
             dados = json.load(f)
 
         self.num_documentos = dados["num_documentos"]
-        self.documentos     = dados.get("documentos", {})  # <-- CORREÇÃO: chave correta
         self.indice = {}
 
         for termo, info in dados["indice"].items():
@@ -290,6 +295,7 @@ if __name__ == "__main__":
 
     # 2. Construir o índice
     indice = IndiceInvertido()
+    #indice.reset_total()
     indice.construir_de_indexer(documentos_processados)
 
     # 3. Estatísticas
@@ -321,3 +327,4 @@ if __name__ == "__main__":
     )
     indice.adicionar_documentos(novos_docs)
     indice.guardar("tests/indice_invertido.json")  # re-guardar com os novos docs
+    
