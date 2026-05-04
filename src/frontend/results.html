@@ -40,10 +40,10 @@
             </div>
 
             <div class="filter-group">
-                <label>Processamento [cite: 57]</label>
-                <div class="checkbox-item"><input type="checkbox" checked> Stemming</div>
-                <div class="checkbox-item"><input type="checkbox"> Lematização</div>
-                <div class="checkbox-item"><input type="checkbox" checked> Stop Words</div>
+                <label>Processamento</label>
+                <div class="checkbox-item"><input type="checkbox" value="stemming"> Stemming</div>
+                <div class="checkbox-item"><input type="checkbox" value="lematizacao" checked> Lematização</div>
+                <div class="checkbox-item"><input type="checkbox" value="stopwords" checked> Stop Words</div>
             </div>
 
             <div class="filter-group">
@@ -103,19 +103,33 @@
         }
 
     // Função que vai buscar os dados à API Python
-    async function performSearch(query, method) {
+async function performSearch(query, method) {
         // 1. Captura os elementos do DOM
         const resultsContainer = document.getElementById("results-list");
         const countElem = document.querySelector('.results-count');
         const yearMin = document.getElementById('year-min').value;
         const yearMax = document.getElementById('year-max').value;
 
+        // CAPTURA DO ESTADO DAS CHECKBOXES
+        // Nota: Certifica-te que no teu HTML as checkboxes têm value="stemming", "lematizacao" e "stopwords"
+        const stemming = document.querySelector('input[value="stemming"]')?.checked || false;
+        const lemma = document.querySelector('input[value="lematizacao"]')?.checked || false;
+        const sw = document.querySelector('input[value="stopwords"]')?.checked || false;
+
         // Feedback visual enquanto carrega
         resultsContainer.innerHTML = "<p>A carregar resultados...</p>";
 
         try {
-            // 2. Faz o pedido à API com todos os parâmetros
-            const response = await fetch(`http://127.0.0.1:8000/search?query=${encodeURIComponent(query)}&method=${method}&year_min=${yearMin}&year_max=${yearMax}`);
+            // 2. Faz o pedido à API com todos os parâmetros, incluindo os novos filtros de NLP[cite: 3]
+            const url = `http://127.0.0.1:8000/search?query=${encodeURIComponent(query)}` + 
+                        `&method=${method}` +
+                        `&year_min=${yearMin}` +
+                        `&year_max=${yearMax}` +
+                        `&stemming=${stemming}` +
+                        `&lematizacao=${lemma}` +
+                        `&stopwords=${sw}`;
+
+            const response = await fetch(url);
             const data = await response.json();
 
             // 3. Limpa o contentor de resultados
