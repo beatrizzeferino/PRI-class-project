@@ -5,7 +5,7 @@ import json
 # Ajustar o path para encontrar a pasta 'src'
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from src.search.indexer import Indexer
+from search.corpusProcessor import Indexer
 
 def setup_temp_dataset(filename):
     """Cria um mini dataset com idiomas mistos para o teste."""

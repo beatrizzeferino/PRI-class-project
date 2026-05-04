@@ -2,7 +2,8 @@ import json
 import time
 from src.scraper.scraper import UMinhoDSpace8Scraper
 from src.scraper.extrair_pdfs import add_texto_scraper
-from src.search.indexer import Indexer
+from src.search.corpusProcessor import CorpusProcessor
+from src.search.booleano import ModeloBooleano
 
 def load_config(config_path="config.json"):
     """Lê as configurações do ficheiro JSON."""
@@ -62,10 +63,10 @@ def main():
     
     print(f"\n{'='*20} 3. INDEXAÇÃO E PROCESSAMENTO NLP {'='*20}")
     
-    idx = Indexer() # O Indexer já carrega o TextProcessor internamente
+    processador = CorpusProcessor() # O Indexer já carrega o TextProcessor internamente
     
     # Processamos o dataset com as escolhas feitas acima
-    documentos_indexados = idx.processar_dataset(
+    documentos_indexados = processador.processar_dataset(
         config['output_file'],
         remove_stopwords=remover_sw,
         normalization_method=metodo_norm
@@ -88,6 +89,33 @@ def main():
         
     print(f"\n{'='*60}")
     print(f"✅ Processamento concluído com sucesso!")
+
+    #------- MODELO BOOLEANO ---------------
+    modelo_booleano= ModeloBooleano(
+        corpus_processado=documentos_indexados,
+        remove_stopwords=remover_sw,
+        normalization_method=metodo_norm,
+        language="english" #assume o modelo ingles no processamento das querys
+    )
+    modelo_booleano.construir_matriz(config['output_file'])
+    
+    '''
+    Testar modelo booleano
+
+    print(f"\n{'='*20} BOOLEAN SEARCH MODE {'='*20}")
+
+    while True:
+        query = input("\nQuery Boolean (ou 'exit'): ")
+        
+        if query.lower() == "exit":
+            break
+
+        resultados = modelo_booleano.executar_pesquisa(query)
+
+        print(f"\n Resultados ({len(resultados)} documentos):")
+        for r in resultados[:10]:
+            print(" -", r)
+    '''
 
 if __name__ == "__main__":
     main()
