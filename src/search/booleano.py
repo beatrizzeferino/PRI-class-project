@@ -208,6 +208,9 @@ class ModeloBooleano:
         
         while operadores:
             resolver_ultimo()
+
+        if not vetores:
+            return [0] * len(self.doc_ids)
         
         return vetores[0]
     
