@@ -59,7 +59,7 @@ class IndiceInvertido:
 
     def construir_de_indexer(self, documentos_processados):
         """
-        Constrói o índice a partir do dicionário devolvido pelo Indexer.
+        Constrói o índice a partir do dicionário devolvido pelo CorpusProcesser.
         Chama _indexar_documento para cada doc e no final finaliza o índice.
         """
         for doc_id, info in documentos_processados.items():
@@ -115,7 +115,7 @@ class IndiceInvertido:
 
         Parâmetro:
             novos_documentos_processados (dict): mesmo formato que o devolvido
-            pelo Indexer — {doc_id: {tokens_pesquisa, titulo, url, ...}}
+            pelo CorpusProcesser — {doc_id: {tokens_pesquisa, titulo, url, ...}}
         """
         termos_afetados = set()
 
@@ -277,54 +277,3 @@ class IndiceInvertido:
         print(f"[OK] Índice carregado: {self.num_documentos} documentos, "
               f"{len(self.indice)} termos.")
 
-
-# ------------------------------------------------------------------ #
-#  Bloco principal — exemplo de uso                                    #
-# ------------------------------------------------------------------ #
-
-if __name__ == "__main__":
-    from src.search.indexer import Indexer
-
-    # 1. Processar documentos com o Indexer
-    indexer = Indexer()
-    documentos_processados = indexer.processar_dataset(
-        "scraper_results.json",
-        remove_stopwords=True,
-        normalization_method='lemma'
-    )
-
-    # 2. Construir o índice
-    indice = IndiceInvertido()
-    #indice.reset_total()
-    indice.construir_de_indexer(documentos_processados)
-
-    # 3. Estatísticas
-    stats = indice.estatisticas()
-    print(f"\nEstatísticas do índice:")
-    print(f"  Documentos    : {stats['num_documentos']}")
-    print(f"  Termos únicos : {stats['num_termos_unicos']}")
-    print(f"  Top 10 termos : {stats['top_10_termos_por_df']}")
-
-    # 4. Exemplo de interseção com skip pointers
-    pl_use    = indice.obter_posting_list("use")
-    pl_system = indice.obter_posting_list("system")
-
-    if pl_use and pl_system:
-        resultado = indice.intersetar_com_skip(pl_use, pl_system)
-        print(f"\nResultados 'use AND system': {len(resultado.postings)} documentos")
-        for p in resultado.postings[:5]:
-            meta = indice.documentos.get(p["doc_id"], {})
-            print(f"  - {meta.get('titulo', p['doc_id'])} (tf={p['tf']})")
-
-    # 5. Guardar índice no disco
-    indice.guardar("indice_invertido.json")
-
-    # 6. Demonstração de atualização incremental
-    novos_docs = indexer.processar_dataset(
-        "scraper_results.json",
-        remove_stopwords=True,
-        normalization_method='lemma'
-    )
-    indice.adicionar_documentos(novos_docs)
-    indice.guardar("tests/indice_invertido.json")  # re-guardar com os novos docs
-    

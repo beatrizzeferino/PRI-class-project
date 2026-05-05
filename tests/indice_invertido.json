@@ -1,5 +1,5 @@
 {
-  "num_documentos": 23,
+  "num_documentos": 25,
   "indice": {
     "foreword": {
       "df": 1,
@@ -132,7 +132,7 @@
       ]
     },
     "paper": {
-      "df": 6,
+      "df": 7,
       "postings": [
         {
           "doc_id": "10.1007/11676904_2",
@@ -157,6 +157,10 @@
         {
           "doc_id": "10.3390/a17090389",
           "tf": 1
+        },
+        {
+          "doc_id": "doc_0",
+          "tf": 1
         }
       ]
     },
@@ -170,7 +174,7 @@
       ]
     },
     "computer": {
-      "df": 3,
+      "df": 4,
       "postings": [
         {
           "doc_id": "10.1016/j.cag.2021.12.006",
@@ -183,6 +187,10 @@
         {
           "doc_id": "10.1109/access.2024.3352114",
           "tf": 2
+        },
+        {
+          "doc_id": "doc_1",
+          "tf": 1
         }
       ]
     },
@@ -209,7 +217,7 @@
       ]
     },
     "present": {
-      "df": 8,
+      "df": 9,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_18",
@@ -241,6 +249,10 @@
         },
         {
           "doc_id": "10.34133/space.0278",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
@@ -282,7 +294,7 @@
       ]
     },
     "–": {
-      "df": 6,
+      "df": 7,
       "postings": [
         {
           "doc_id": "10.1007/11676904_2",
@@ -305,7 +317,11 @@
           "tf": 2
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_0",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
           "tf": 1
         }
       ]
@@ -565,7 +581,7 @@
       ]
     },
     "propose": {
-      "df": 10,
+      "df": 11,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_18",
@@ -605,6 +621,10 @@
         },
         {
           "doc_id": "10.3390/e27121196",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
@@ -693,7 +713,7 @@
       ]
     },
     "base": {
-      "df": 12,
+      "df": 13,
       "postings": [
         {
           "doc_id": "10.1007/11676904_2",
@@ -742,6 +762,10 @@
         {
           "doc_id": "10.3390/a17090389",
           "tf": 4
+        },
+        {
+          "doc_id": "doc_1",
+          "tf": 1
         }
       ]
     },
@@ -898,7 +922,7 @@
       ]
     },
     "make": {
-      "df": 8,
+      "df": 9,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_36",
@@ -931,6 +955,10 @@
         {
           "doc_id": "10.3390/make4010003",
           "tf": 2
+        },
+        {
+          "doc_id": "doc_0",
+          "tf": 1
         }
       ]
     },
@@ -944,7 +972,7 @@
       ]
     },
     "decision": {
-      "df": 5,
+      "df": 6,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_18",
@@ -965,6 +993,10 @@
         {
           "doc_id": "10.2196/57231",
           "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
+          "tf": 1
         }
       ]
     },
@@ -980,7 +1012,7 @@
           "tf": 3
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_2",
           "tf": 2
         }
       ]
@@ -1047,7 +1079,7 @@
           "tf": 1
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_2",
           "tf": 1
         }
       ]
@@ -1224,7 +1256,7 @@
       ]
     },
     "show": {
-      "df": 9,
+      "df": 10,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_18",
@@ -1261,11 +1293,15 @@
         {
           "doc_id": "10.3390/e27121196",
           "tf": 1
+        },
+        {
+          "doc_id": "doc_0",
+          "tf": 1
         }
       ]
     },
     "implement": {
-      "df": 5,
+      "df": 6,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_36",
@@ -1285,6 +1321,10 @@
         },
         {
           "doc_id": "10.1145/3472294",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
@@ -1380,7 +1420,7 @@
       ]
     },
     "easy": {
-      "df": 2,
+      "df": 3,
       "postings": [
         {
           "doc_id": "10.1145/3472294",
@@ -1388,6 +1428,10 @@
         },
         {
           "doc_id": "10.3390/make4010003",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_0",
           "tf": 1
         }
       ]
@@ -1451,7 +1495,7 @@
           "tf": 1
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_2",
           "tf": 1
         }
       ]
@@ -1722,11 +1766,15 @@
       ]
     },
     "find": {
-      "df": 1,
+      "df": 2,
       "postings": [
         {
           "doc_id": "10.3390/make4010003",
           "tf": 2
+        },
+        {
+          "doc_id": "doc_0",
+          "tf": 1
         }
       ]
     },
@@ -1889,7 +1937,7 @@
       ]
     },
     "work": {
-      "df": 7,
+      "df": 9,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_18",
@@ -1917,6 +1965,14 @@
         },
         {
           "doc_id": "10.3390/make4010003",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_0",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
@@ -1951,13 +2007,13 @@
           "tf": 1
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_2",
           "tf": 3
         }
       ]
     },
     "solution": {
-      "df": 6,
+      "df": 7,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_36",
@@ -1982,15 +2038,23 @@
         {
           "doc_id": "10.3390/make4010003",
           "tf": 1
+        },
+        {
+          "doc_id": "doc_0",
+          "tf": 2
         }
       ]
     },
     "create": {
-      "df": 1,
+      "df": 2,
       "postings": [
         {
           "doc_id": "10.3390/make4010003",
           "tf": 2
+        },
+        {
+          "doc_id": "doc_1",
+          "tf": 1
         }
       ]
     },
@@ -2127,7 +2191,7 @@
       ]
     },
     "result": {
-      "df": 7,
+      "df": 8,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_36",
@@ -2156,11 +2220,15 @@
         {
           "doc_id": "10.3390/make4010003",
           "tf": 2
+        },
+        {
+          "doc_id": "doc_1",
+          "tf": 1
         }
       ]
     },
     "use": {
-      "df": 14,
+      "df": 16,
       "postings": [
         {
           "doc_id": "10.1007/11676904_2",
@@ -2215,7 +2283,15 @@
           "tf": 1
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_0",
+          "tf": 4
+        },
+        {
+          "doc_id": "doc_1",
+          "tf": 2
+        },
+        {
+          "doc_id": "doc_2",
           "tf": 1
         }
       ]
@@ -2248,10 +2324,14 @@
       ]
     },
     "smart": {
-      "df": 1,
+      "df": 2,
       "postings": [
         {
           "doc_id": "10.3390/make4010003",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_0",
           "tf": 1
         }
       ]
@@ -2326,7 +2406,7 @@
       ]
     },
     "order": {
-      "df": 7,
+      "df": 8,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_18",
@@ -2354,6 +2434,10 @@
         },
         {
           "doc_id": "10.3390/make4010003",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
@@ -2426,7 +2510,7 @@
           "tf": 1
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_2",
           "tf": 1
         }
       ]
@@ -2525,7 +2609,7 @@
       ]
     },
     "different": {
-      "df": 7,
+      "df": 8,
       "postings": [
         {
           "doc_id": "10.1007/11676904_2",
@@ -2553,6 +2637,10 @@
         },
         {
           "doc_id": "10.34133/space.0278",
+          "tf": 2
+        },
+        {
+          "doc_id": "doc_1",
           "tf": 2
         }
       ]
@@ -2631,7 +2719,7 @@
       ]
     },
     "model": {
-      "df": 12,
+      "df": 13,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_18",
@@ -2678,7 +2766,11 @@
           "tf": 2
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_1",
+          "tf": 2
+        },
+        {
+          "doc_id": "doc_2",
           "tf": 3
         }
       ]
@@ -2732,10 +2824,14 @@
       ]
     },
     "web": {
-      "df": 1,
+      "df": 2,
       "postings": [
         {
           "doc_id": "10.3390/make4010003",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_0",
           "tf": 1
         }
       ]
@@ -2861,7 +2957,7 @@
       ]
     },
     "new": {
-      "df": 5,
+      "df": 6,
       "postings": [
         {
           "doc_id": "10.1016/j.ijhcs.2026.103782",
@@ -2881,6 +2977,10 @@
         },
         {
           "doc_id": "10.3390/info15120745",
+          "tf": 2
+        },
+        {
+          "doc_id": "doc_0",
           "tf": 2
         }
       ]
@@ -2957,7 +3057,7 @@
       ]
     },
     "problem": {
-      "df": 8,
+      "df": 9,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_18",
@@ -2990,6 +3090,10 @@
         {
           "doc_id": "10.34133/space.0278",
           "tf": 1
+        },
+        {
+          "doc_id": "doc_0",
+          "tf": 1
         }
       ]
     },
@@ -3012,7 +3116,7 @@
       ]
     },
     "best": {
-      "df": 3,
+      "df": 4,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16528-8_17",
@@ -3024,6 +3128,10 @@
         },
         {
           "doc_id": "10.1109/ACCESS.2019.2939142",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_0",
           "tf": 1
         }
       ]
@@ -3263,7 +3371,7 @@
       ]
     },
     "system": {
-      "df": 14,
+      "df": 16,
       "postings": [
         {
           "doc_id": "10.1007/11676904_2",
@@ -3320,6 +3428,14 @@
         {
           "doc_id": "10.34133/space.0278",
           "tf": 2
+        },
+        {
+          "doc_id": "doc_0",
+          "tf": 4
+        },
+        {
+          "doc_id": "doc_1",
+          "tf": 1
         }
       ]
     },
@@ -3646,7 +3762,7 @@
           "tf": 1
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_2",
           "tf": 1
         }
       ]
@@ -3982,7 +4098,7 @@
       ]
     },
     "impact": {
-      "df": 4,
+      "df": 5,
       "postings": [
         {
           "doc_id": "10.1016/j.jss.2019.110463",
@@ -3998,6 +4114,10 @@
         },
         {
           "doc_id": "10.34133/space.0278",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
@@ -4155,13 +4275,13 @@
           "tf": 2
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_2",
           "tf": 1
         }
       ]
     },
     "case": {
-      "df": 4,
+      "df": 5,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_18",
@@ -4178,6 +4298,10 @@
         {
           "doc_id": "10.1016/j.jss.2019.110463",
           "tf": 1
+        },
+        {
+          "doc_id": "doc_0",
+          "tf": 1
         }
       ]
     },
@@ -4191,7 +4315,7 @@
       ]
     },
     "obtain": {
-      "df": 4,
+      "df": 5,
       "postings": [
         {
           "doc_id": "10.1007/11676904_2",
@@ -4207,6 +4331,10 @@
         },
         {
           "doc_id": "10.1016/j.jss.2019.110463",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
@@ -4295,7 +4423,7 @@
       ]
     },
     "introduce": {
-      "df": 6,
+      "df": 7,
       "postings": [
         {
           "doc_id": "10.1007/11676904_2",
@@ -4318,7 +4446,11 @@
           "tf": 1
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_0",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
           "tf": 1
         }
       ]
@@ -4424,7 +4556,7 @@
       ]
     },
     "study": {
-      "df": 9,
+      "df": 10,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_18",
@@ -4461,6 +4593,10 @@
         {
           "doc_id": "10.2196/57231",
           "tf": 2
+        },
+        {
+          "doc_id": "doc_1",
+          "tf": 1
         }
       ]
     },
@@ -4541,7 +4677,7 @@
           "tf": 1
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_2",
           "tf": 1
         }
       ]
@@ -4634,7 +4770,7 @@
       ]
     },
     "perform": {
-      "df": 3,
+      "df": 4,
       "postings": [
         {
           "doc_id": "10.1016/j.jss.2019.110463",
@@ -4645,7 +4781,11 @@
           "tf": 1
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_1",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
           "tf": 1
         }
       ]
@@ -4739,7 +4879,7 @@
       ]
     },
     "environment": {
-      "df": 8,
+      "df": 9,
       "postings": [
         {
           "doc_id": "10.1007/11676904_2",
@@ -4772,6 +4912,10 @@
         {
           "doc_id": "10.3390/info15120745",
           "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
+          "tf": 2
         }
       ]
     },
@@ -4862,7 +5006,7 @@
       ]
     },
     "one": {
-      "df": 5,
+      "df": 6,
       "postings": [
         {
           "doc_id": "10.1007/11676904_2",
@@ -4882,6 +5026,10 @@
         },
         {
           "doc_id": "10.2196/57231",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
@@ -4925,7 +5073,7 @@
           "tf": 2
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_2",
           "tf": 1
         }
       ]
@@ -5023,7 +5171,7 @@
       ]
     },
     "integrate": {
-      "df": 3,
+      "df": 4,
       "postings": [
         {
           "doc_id": "10.1007/11676904_2",
@@ -5035,6 +5183,10 @@
         },
         {
           "doc_id": "10.2196/57231",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
@@ -5112,7 +5264,7 @@
           "tf": 1
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_2",
           "tf": 4
         }
       ]
@@ -5204,7 +5356,7 @@
           "tf": 1
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_2",
           "tf": 1
         }
       ]
@@ -5517,7 +5669,7 @@
           "tf": 1
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_2",
           "tf": 1
         }
       ]
@@ -5568,7 +5720,7 @@
           "tf": 1
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_2",
           "tf": 1
         }
       ]
@@ -5801,7 +5953,7 @@
       ]
     },
     "technology": {
-      "df": 3,
+      "df": 4,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16528-8_19",
@@ -5813,6 +5965,10 @@
         },
         {
           "doc_id": "10.1109/ACCESS.2025.3636061",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_0",
           "tf": 1
         }
       ]
@@ -5835,7 +5991,7 @@
       ]
     },
     "way": {
-      "df": 3,
+      "df": 4,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16528-8_19",
@@ -5847,6 +6003,10 @@
         },
         {
           "doc_id": "10.3390/info15120745",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
@@ -6260,10 +6420,14 @@
       ]
     },
     "look": {
-      "df": 1,
+      "df": 2,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_36",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
@@ -6364,10 +6528,14 @@
       ]
     },
     "consolidated": {
-      "df": 1,
+      "df": 2,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_36",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_0",
           "tf": 1
         }
       ]
@@ -6421,7 +6589,7 @@
       ]
     },
     "process": {
-      "df": 3,
+      "df": 4,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_36",
@@ -6434,6 +6602,10 @@
         {
           "doc_id": "10.2196/57231",
           "tf": 4
+        },
+        {
+          "doc_id": "doc_1",
+          "tf": 2
         }
       ]
     },
@@ -6961,7 +7133,7 @@
       ]
     },
     "indeed": {
-      "df": 4,
+      "df": 5,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_18",
@@ -6977,6 +7149,10 @@
         },
         {
           "doc_id": "10.1155/2015/467178",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
@@ -7101,7 +7277,7 @@
       ]
     },
     "development": {
-      "df": 7,
+      "df": 8,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_18",
@@ -7129,6 +7305,10 @@
         },
         {
           "doc_id": "10.34133/space.0278",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_0",
           "tf": 1
         }
       ]
@@ -7545,7 +7725,7 @@
       ]
     },
     "reasoning": {
-      "df": 2,
+      "df": 3,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_18",
@@ -7553,6 +7733,10 @@
         },
         {
           "doc_id": "10.1155/2015/467178",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_0",
           "tf": 1
         }
       ]
@@ -7707,7 +7891,7 @@
           "tf": 2
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_2",
           "tf": 2
         }
       ]
@@ -7744,10 +7928,14 @@
       ]
     },
     "involve": {
-      "df": 1,
+      "df": 2,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-16486-1_18",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
@@ -8217,7 +8405,7 @@
           "tf": 2
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_2",
           "tf": 1
         }
       ]
@@ -8236,7 +8424,7 @@
       ]
     },
     "reason": {
-      "df": 2,
+      "df": 3,
       "postings": [
         {
           "doc_id": "10.1007/978-3-319-19222-2_18",
@@ -8245,6 +8433,10 @@
         {
           "doc_id": "10.1155/2015/467178",
           "tf": 2
+        },
+        {
+          "doc_id": "doc_0",
+          "tf": 1
         }
       ]
     },
@@ -8273,7 +8465,7 @@
           "tf": 1
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_2",
           "tf": 1
         }
       ]
@@ -8332,7 +8524,7 @@
       ]
     },
     "stand": {
-      "df": 3,
+      "df": 4,
       "postings": [
         {
           "doc_id": "10.1155/2015/467178",
@@ -8344,6 +8536,10 @@
         },
         {
           "doc_id": "10.3390/info15120745",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
@@ -8442,11 +8638,15 @@
       ]
     },
     "emotion": {
-      "df": 1,
+      "df": 2,
       "postings": [
         {
           "doc_id": "10.1155/2015/467178",
           "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
+          "tf": 2
         }
       ]
     },
@@ -8476,7 +8676,7 @@
           "tf": 1
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_2",
           "tf": 3
         }
       ]
@@ -8783,66 +8983,207 @@
         }
       ]
     },
-    "cluster": {
-      "df": 2,
-      "postings": [
-        {
-          "doc_id": "10.1016/j.cmpb.2012.10.001",
-          "tf": 1
-        },
-        {
-          "doc_id": "N/A",
-          "tf": 8
-        }
-      ]
-    },
-    "federate": {
+    "educase": {
       "df": 1,
       "postings": [
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_0",
+          "tf": 1
+        }
+      ]
+    },
+    "intelligent": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_0",
           "tf": 2
         }
       ]
     },
-    "spatio-temporal": {
+    "pedagogical": {
       "df": 1,
       "postings": [
         {
-          "doc_id": "N/A",
-          "tf": 4
-        }
-      ]
-    },
-    "graph": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
+          "doc_id": "doc_0",
           "tf": 3
         }
       ]
     },
-    "attention": {
+    "advise": {
       "df": 1,
       "postings": [
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_0",
+          "tf": 3
+        }
+      ]
+    },
+    "case-based": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_0",
+          "tf": 2
+        }
+      ]
+    },
+    "introduces": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.3390/a17090389",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_0",
+          "tf": 1
+        }
+      ]
+    },
+    "proposal": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.3390/a17090389",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_0",
+          "tf": 1
+        }
+      ]
+    },
+    "scheme": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_0",
+          "tf": 1
+        }
+      ]
+    },
+    "apply": {
+      "df": 3,
+      "postings": [
+        {
+          "doc_id": "10.1016/j.ijhcs.2026.103782",
+          "tf": 1
+        },
+        {
+          "doc_id": "10.3390/a17090389",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_0",
+          "tf": 1
+        }
+      ]
+    },
+    "task": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_0",
+          "tf": 1
+        }
+      ]
+    },
+    "student": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.1016/j.ijhcs.2026.103782",
           "tf": 5
+        },
+        {
+          "doc_id": "doc_0",
+          "tf": 1
         }
       ]
     },
-    "skeleton-based": {
+    "staff": {
       "df": 1,
       "postings": [
         {
-          "doc_id": "N/A",
-          "tf": 3
+          "doc_id": "doc_0",
+          "tf": 1
+        }
+      ]
+    },
+    "intend": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_0",
+          "tf": 1
+        }
+      ]
+    },
+    "motivation": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_0",
+          "tf": 1
+        }
+      ]
+    },
+    "behind": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_0",
+          "tf": 1
+        }
+      ]
+    },
+    "choice": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_0",
+          "tf": 1
+        }
+      ]
+    },
+    "structure": {
+      "df": 3,
+      "postings": [
+        {
+          "doc_id": "10.1016/j.ijhcs.2026.103782",
+          "tf": 1
+        },
+        {
+          "doc_id": "10.3390/e27121196",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_0",
+          "tf": 1
+        }
+      ]
+    },
+    "justify": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_0",
+          "tf": 1
+        }
+      ]
+    },
+    "incremental": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_0",
+          "tf": 1
         }
       ]
     },
     "learn": {
-      "df": 3,
+      "df": 4,
       "postings": [
         {
           "doc_id": "10.1016/j.ijhcs.2026.103782",
@@ -8853,39 +9194,34 @@
           "tf": 1
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_0",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
           "tf": 2
         }
       ]
     },
-    "fl": {
+    "technics": {
       "df": 1,
       "postings": [
         {
-          "doc_id": "N/A",
-          "tf": 3
-        }
-      ]
-    },
-    "remain": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
+          "doc_id": "doc_0",
           "tf": 1
         }
       ]
     },
-    "underexplored": {
+    "prototyping": {
       "df": 1,
       "postings": [
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
     },
-    "particularly": {
+    "team": {
       "df": 2,
       "postings": [
         {
@@ -8893,750 +9229,74 @@
           "tf": 1
         },
         {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "strong": {
-      "df": 2,
-      "postings": [
-        {
-          "doc_id": "10.3390/a17090389",
-          "tf": 1
-        },
-        {
-          "doc_id": "N/A",
-          "tf": 2
-        }
-      ]
-    },
-    "client": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 3
-        }
-      ]
-    },
-    "heterogeneity": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "regular": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "fedavg": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 2
-        }
-      ]
-    },
-    "tend": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "drift": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "unstable": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "convergence": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "federated": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 2
-        }
-      ]
-    },
-    "cf-stgat": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 2
-        }
-      ]
-    },
-    "clustered": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "leverage": {
-      "df": 3,
-      "postings": [
-        {
-          "doc_id": "10.1016/j.ijhcs.2026.103782",
-          "tf": 1
-        },
-        {
-          "doc_id": "10.1109/ACCESS.2025.3636061",
-          "tf": 1
-        },
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "attention-derived": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "statistic": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 2
-        }
-      ]
-    },
-    "stgat": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 2
-        }
-      ]
-    },
-    "dynamically": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "attention-weighted": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "inter-cluster": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 3
-        }
-      ]
-    },
-    "gently": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "align": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "concretely": {
-      "df": 2,
-      "postings": [
-        {
-          "doc_id": "10.3390/e27121196",
-          "tf": 1
-        },
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "server": {
-      "df": 2,
-      "postings": [
-        {
-          "doc_id": "10.1109/ACCESS.2025.3581487",
-          "tf": 1
-        },
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "periodically": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "multi-head": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "parameter-based": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "descriptor": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "normalizes": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "project": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "pca": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "applies": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "k-means": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "form": {
-      "df": 2,
-      "postings": [
-        {
-          "doc_id": "10.1016/j.ijhcs.2026.103782",
-          "tf": 1
-        },
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "global": {
-      "df": 3,
-      "postings": [
-        {
-          "doc_id": "10.2196/57231",
-          "tf": 1
-        },
-        {
-          "doc_id": "10.34133/space.0278",
-          "tf": 1
-        },
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "reference": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "similarity": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "weight": {
-      "df": 2,
-      "postings": [
-        {
-          "doc_id": "10.1109/ACCESS.2025.3636061",
-          "tf": 1
-        },
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "regularize": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "lightweight": {
-      "df": 3,
-      "postings": [
-        {
-          "doc_id": "10.1109/ACCESS.2025.3636061",
-          "tf": 1
-        },
-        {
-          "doc_id": "10.3390/e27121196",
-          "tf": 3
-        },
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "ntu": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
+          "doc_id": "doc_1",
           "tf": 4
         }
       ]
     },
-    "rgb+d": {
+    "affective": {
       "df": 1,
       "postings": [
         {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "60/120": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
+          "doc_id": "doc_1",
           "tf": 2
         }
       ]
     },
-    "consistently": {
+    "agent": {
       "df": 1,
       "postings": [
         {
-          "doc_id": "N/A",
-          "tf": 1
+          "doc_id": "doc_1",
+          "tf": 3
         }
       ]
     },
-    "outperform": {
+    "robocode": {
       "df": 1,
       "postings": [
         {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "baseline": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "backbone": {
-      "df": 2,
-      "postings": [
-        {
-          "doc_id": "10.3390/e27121196",
-          "tf": 1
-        },
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "yield": {
-      "df": 2,
-      "postings": [
-        {
-          "doc_id": "10.3390/e27121196",
-          "tf": 1
-        },
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "absolute": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "top-1": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "+0.84/+4.09": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "60": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "x-sub/x-setup": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
+          "doc_id": "doc_1",
           "tf": 2
         }
       ]
     },
-    "+7.98/+4.18": {
-      "df": 1,
+    "affect": {
+      "df": 3,
       "postings": [
         {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "120": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "alongside": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "smooth": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "per-client": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "trajectory": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "lower": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "terminal": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "loss": {
-      "df": 2,
-      "postings": [
-        {
-          "doc_id": "10.3390/e27121196",
+          "doc_id": "10.2196/57231",
           "tf": 1
         },
         {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "ablation": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "indicate": {
-      "df": 2,
-      "postings": [
-        {
-          "doc_id": "10.3390/a17090389",
+          "doc_id": "10.3390/info15120745",
           "tf": 1
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
     },
-    "attention-guided": {
+    "making": {
       "df": 1,
       "postings": [
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
     },
-    "complementary": {
+    "multi-disciplinary": {
       "df": 1,
       "postings": [
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
     },
-    "clustering": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "reduces": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "within-group": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "whereas": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "limit": {
-      "df": 4,
-      "postings": [
-        {
-          "doc_id": "10.1109/ACCESS.2025.3581487",
-          "tf": 1
-        },
-        {
-          "doc_id": "10.1109/ACCESS.2025.3636061",
-          "tf": 1
-        },
-        {
-          "doc_id": "10.3390/e27121196",
-          "tf": 1
-        },
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "cross-cluster": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "divergence": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "keep": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "unchanged": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "N/A",
-          "tf": 1
-        }
-      ]
-    },
-    "add": {
+    "issue": {
       "df": 2,
       "postings": [
         {
@@ -9644,29 +9304,376 @@
           "tf": 1
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
     },
-    "server-side": {
+    "e.g": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.1016/j.cmpb.2012.10.001",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
+          "tf": 2
+        }
+      ]
+    },
+    "insight": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.3390/info15120745",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "discipline": {
       "df": 1,
       "postings": [
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
     },
-    "regularization": {
+    "psychology": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "neuroscience": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "philosophy": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "science": {
       "df": 2,
       "postings": [
+        {
+          "doc_id": "10.1109/access.2024.3352114",
+          "tf": 2
+        },
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "hand": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 2
+        }
+      ]
+    },
+    "play": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "battlefield": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 2
+        }
+      ]
+    },
+    "emotional": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 2
+        }
+      ]
+    },
+    "profile": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "personality": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 2
+        }
+      ]
+    },
+    "mood": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 2
+        }
+      ]
+    },
+    "occ": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "ortony": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "clore": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "collins": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "implemented": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "robot": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "pleasure-arousal-dominance": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "pad": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "attain": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "cooperation": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "vote": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "mechanism": {
+      "df": 3,
+      "postings": [
+        {
+          "doc_id": "10.1109/ACCESS.2025.3581487",
+          "tf": 1
+        },
         {
           "doc_id": "10.3390/e27121196",
           "tf": 1
         },
         {
-          "doc_id": "N/A",
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "decision-making": {
+      "df": 3,
+      "postings": [
+        {
+          "doc_id": "10.2196/57231",
+          "tf": 1
+        },
+        {
+          "doc_id": "10.3390/info15120745",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "simulation": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "far": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "quite": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 2
+        }
+      ]
+    },
+    "satisfying": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "well": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.3390/info15120745",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "undertakes": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "behaviour": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "depend": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "skirmish": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_1",
+          "tf": 1
+        }
+      ]
+    },
+    "condition": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.34133/space.0278",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_1",
           "tf": 1
         }
       ]
@@ -9771,15 +9778,6 @@
         },
         {
           "doc_id": "10.2196/57231",
-          "tf": 1
-        }
-      ]
-    },
-    "e.g": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "10.1016/j.cmpb.2012.10.001",
           "tf": 1
         }
       ]
@@ -9890,15 +9888,6 @@
         }
       ]
     },
-    "issue": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "10.1016/j.cmpb.2012.10.001",
-          "tf": 1
-        }
-      ]
-    },
     "efficient": {
       "df": 3,
       "postings": [
@@ -9958,6 +9947,19 @@
         {
           "doc_id": "10.1016/j.cmpb.2012.10.001",
           "tf": 1
+        }
+      ]
+    },
+    "cluster": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.1016/j.cmpb.2012.10.001",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
+          "tf": 8
         }
       ]
     },
@@ -10060,6 +10062,19 @@
         }
       ]
     },
+    "add": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.1016/j.cmpb.2012.10.001",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
     "biological": {
       "df": 1,
       "postings": [
@@ -10115,15 +10130,6 @@
         {
           "doc_id": "10.1016/j.ijhcs.2026.103782",
           "tf": 1
-        }
-      ]
-    },
-    "student": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "10.1016/j.ijhcs.2026.103782",
-          "tf": 5
         }
       ]
     },
@@ -10234,6 +10240,23 @@
         }
       ]
     },
+    "leverage": {
+      "df": 3,
+      "postings": [
+        {
+          "doc_id": "10.1016/j.ijhcs.2026.103782",
+          "tf": 1
+        },
+        {
+          "doc_id": "10.1109/ACCESS.2025.3636061",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
     "device": {
       "df": 3,
       "postings": [
@@ -10301,19 +10324,6 @@
       "postings": [
         {
           "doc_id": "10.1016/j.ijhcs.2026.103782",
-          "tf": 1
-        }
-      ]
-    },
-    "apply": {
-      "df": 2,
-      "postings": [
-        {
-          "doc_id": "10.1016/j.ijhcs.2026.103782",
-          "tf": 1
-        },
-        {
-          "doc_id": "10.3390/a17090389",
           "tf": 1
         }
       ]
@@ -10389,19 +10399,6 @@
       "postings": [
         {
           "doc_id": "10.1016/j.ijhcs.2026.103782",
-          "tf": 1
-        }
-      ]
-    },
-    "structure": {
-      "df": 2,
-      "postings": [
-        {
-          "doc_id": "10.1016/j.ijhcs.2026.103782",
-          "tf": 1
-        },
-        {
-          "doc_id": "10.3390/e27121196",
           "tf": 1
         }
       ]
@@ -10580,6 +10577,19 @@
       "postings": [
         {
           "doc_id": "10.1016/j.ijhcs.2026.103782",
+          "tf": 1
+        }
+      ]
+    },
+    "form": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.1016/j.ijhcs.2026.103782",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
           "tf": 1
         }
       ]
@@ -10797,15 +10807,6 @@
         }
       ]
     },
-    "introduces": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "10.3390/a17090389",
-          "tf": 1
-        }
-      ]
-    },
     "selective": {
       "df": 1,
       "postings": [
@@ -10998,6 +10999,32 @@
         }
       ]
     },
+    "indicate": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.3390/a17090389",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "strong": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.3390/a17090389",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
+          "tf": 2
+        }
+      ]
+    },
     "robustness": {
       "df": 2,
       "postings": [
@@ -11053,15 +11080,6 @@
         {
           "doc_id": "10.3390/a17090389",
           "tf": 2
-        }
-      ]
-    },
-    "proposal": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "10.3390/a17090389",
-          "tf": 1
         }
       ]
     },
@@ -11203,6 +11221,795 @@
       "postings": [
         {
           "doc_id": "10.3390/a17090389",
+          "tf": 1
+        }
+      ]
+    },
+    "federate": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 2
+        }
+      ]
+    },
+    "spatio-temporal": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 4
+        }
+      ]
+    },
+    "graph": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 3
+        }
+      ]
+    },
+    "attention": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 5
+        }
+      ]
+    },
+    "skeleton-based": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 3
+        }
+      ]
+    },
+    "fl": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 3
+        }
+      ]
+    },
+    "remain": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "underexplored": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "particularly": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.2196/57231",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "client": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 3
+        }
+      ]
+    },
+    "heterogeneity": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "regular": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "fedavg": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 2
+        }
+      ]
+    },
+    "tend": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "drift": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "unstable": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "convergence": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "federated": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 2
+        }
+      ]
+    },
+    "cf-stgat": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 2
+        }
+      ]
+    },
+    "clustered": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "attention-derived": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "statistic": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 2
+        }
+      ]
+    },
+    "stgat": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 2
+        }
+      ]
+    },
+    "dynamically": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "attention-weighted": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "inter-cluster": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 3
+        }
+      ]
+    },
+    "gently": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "align": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "concretely": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.3390/e27121196",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "server": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.1109/ACCESS.2025.3581487",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "periodically": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "multi-head": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "parameter-based": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "descriptor": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "normalizes": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "project": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "pca": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "applies": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "k-means": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "global": {
+      "df": 3,
+      "postings": [
+        {
+          "doc_id": "10.2196/57231",
+          "tf": 1
+        },
+        {
+          "doc_id": "10.34133/space.0278",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "reference": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "similarity": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "weight": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.1109/ACCESS.2025.3636061",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "regularize": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "lightweight": {
+      "df": 3,
+      "postings": [
+        {
+          "doc_id": "10.1109/ACCESS.2025.3636061",
+          "tf": 1
+        },
+        {
+          "doc_id": "10.3390/e27121196",
+          "tf": 3
+        },
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "ntu": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 4
+        }
+      ]
+    },
+    "rgb+d": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "60/120": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 2
+        }
+      ]
+    },
+    "consistently": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "outperform": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "baseline": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "backbone": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.3390/e27121196",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "yield": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.3390/e27121196",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "absolute": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "top-1": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "+0.84/+4.09": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "60": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "x-sub/x-setup": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 2
+        }
+      ]
+    },
+    "+7.98/+4.18": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "120": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "alongside": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "smooth": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "per-client": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "trajectory": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "lower": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "terminal": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "loss": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.3390/e27121196",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "ablation": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "attention-guided": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "complementary": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "clustering": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "reduces": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "within-group": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "whereas": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "limit": {
+      "df": 4,
+      "postings": [
+        {
+          "doc_id": "10.1109/ACCESS.2025.3581487",
+          "tf": 1
+        },
+        {
+          "doc_id": "10.1109/ACCESS.2025.3636061",
+          "tf": 1
+        },
+        {
+          "doc_id": "10.3390/e27121196",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "cross-cluster": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "divergence": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "keep": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "unchanged": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "server-side": {
+      "df": 1,
+      "postings": [
+        {
+          "doc_id": "doc_2",
+          "tf": 1
+        }
+      ]
+    },
+    "regularization": {
+      "df": 2,
+      "postings": [
+        {
+          "doc_id": "10.3390/e27121196",
+          "tf": 1
+        },
+        {
+          "doc_id": "doc_2",
           "tf": 1
         }
       ]
@@ -11841,19 +12648,6 @@
     "lt": {
       "df": 1,
       "postings": [
-        {
-          "doc_id": "10.3390/e27121196",
-          "tf": 1
-        }
-      ]
-    },
-    "mechanism": {
-      "df": 2,
-      "postings": [
-        {
-          "doc_id": "10.1109/ACCESS.2025.3581487",
-          "tf": 1
-        },
         {
           "doc_id": "10.3390/e27121196",
           "tf": 1
@@ -12918,15 +13712,6 @@
         }
       ]
     },
-    "science": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "10.1109/access.2024.3352114",
-          "tf": 2
-        }
-      ]
-    },
     "material": {
       "df": 1,
       "postings": [
@@ -13359,15 +14144,6 @@
         }
       ]
     },
-    "condition": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "10.34133/space.0278",
-          "tf": 1
-        }
-      ]
-    },
     "important": {
       "df": 1,
       "postings": [
@@ -13493,29 +14269,7 @@
         }
       ]
     },
-    "decision-making": {
-      "df": 2,
-      "postings": [
-        {
-          "doc_id": "10.2196/57231",
-          "tf": 1
-        },
-        {
-          "doc_id": "10.3390/info15120745",
-          "tf": 1
-        }
-      ]
-    },
     "actionable": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "10.3390/info15120745",
-          "tf": 1
-        }
-      ]
-    },
-    "insight": {
       "df": 1,
       "postings": [
         {
@@ -13556,15 +14310,6 @@
       ]
     },
     "drive": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "10.3390/info15120745",
-          "tf": 1
-        }
-      ]
-    },
-    "well": {
       "df": 1,
       "postings": [
         {
@@ -13708,19 +14453,6 @@
     "difference": {
       "df": 1,
       "postings": [
-        {
-          "doc_id": "10.3390/info15120745",
-          "tf": 1
-        }
-      ]
-    },
-    "affect": {
-      "df": 2,
-      "postings": [
-        {
-          "doc_id": "10.2196/57231",
-          "tf": 1
-        },
         {
           "doc_id": "10.3390/info15120745",
           "tf": 1
@@ -14203,15 +14935,6 @@
         {
           "doc_id": "10.2196/57231",
           "tf": 2
-        }
-      ]
-    },
-    "team": {
-      "df": 1,
-      "postings": [
-        {
-          "doc_id": "10.2196/57231",
-          "tf": 1
         }
       ]
     },

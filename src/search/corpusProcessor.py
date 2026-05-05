@@ -20,7 +20,7 @@ class CorpusProcessor:
         for doc in documentos_brutos:
             base_id = doc.get('doi')
 
-            if not base_id: #tratar dos casos onde o documento não tem doi associado
+            if doc.get('doi')=="N/A": #tratar dos casos onde o documento não tem doi associado
                 base_id = f"doc_{doc_counter}"
                 doc_counter += 1
 
