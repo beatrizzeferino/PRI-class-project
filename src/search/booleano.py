@@ -65,7 +65,7 @@ class ModeloBooleano:
                 termo_indice = self.termo_indice[termo]
                 self.matriz[termo_indice][doc_indice] = 1
 
-        print(f"Matriz termo-documento construída: {len(self.termos_unicos)} termos x {len(self.doc_ids)} documentos.")
+        print(f"Matriz termo-documento construída: {len(self.termos_unicos)} termos x {len(self.documentos)} documentos.")
 
 
 #=========== Resoluções de Querys ===============================================
