@@ -64,6 +64,7 @@ class ModeloBooleano:
                 self.matriz[termo_indice][doc_indice] = 1
 
         print(f"Matriz termo-documento construída: {len(self.termos_unicos)} termos x {len(self.documentos)} documentos.")
+        print(self.termos_unicos)
 
 
 #=========== Resoluções de Querys ===============================================
