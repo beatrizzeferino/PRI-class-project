@@ -239,8 +239,6 @@ class IndiceInvertido:
     def guardar(self, caminho):
         """
         Serializa o índice e os metadados dos documentos para JSON.
-        CORREÇÃO: a versão anterior não guardava self.documentos,
-        o que causava KeyError ao carregar.
         """
         dados_finais = {
             "num_documentos": self.num_documentos,
