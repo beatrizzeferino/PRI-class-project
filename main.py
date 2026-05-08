@@ -4,6 +4,8 @@ from src.scraper.scraper import UMinhoDSpace8Scraper
 from src.scraper.extrair_pdfs import add_texto_scraper
 from src.search.corpusProcessor import CorpusProcessor
 from src.search.booleano import ModeloBooleano
+from src.search.indice import IndiceInvertido
+from src.search.tfidf import TFIDF, TFIDF_Sklearn
 
 def load_config(config_path="config.json"):
     """Lê as configurações do ficheiro JSON."""
@@ -90,6 +92,13 @@ def main():
     print(f"\n{'='*60}")
     print(f"✅ Processamento concluído com sucesso!")
 
+    #------- Indice Invertido --------------
+    indice= IndiceInvertido()
+    indice.construir_de_indexer(documentos_indexados)
+    print("Índice construído com sucesso!")
+    print(f"Número de documentos: {indice.num_documentos}")
+    print(f"Número de termos únicos: {len(indice.indice)}")
+
     #------- MODELO BOOLEANO ---------------
     modelo_booleano= ModeloBooleano(
         corpus_processado=documentos_indexados,
@@ -97,7 +106,7 @@ def main():
         normalization_method=metodo_norm,
         language="english" #assume o modelo ingles no processamento das querys
     )
-    modelo_booleano.construir_matriz(config['output_file'])
+    modelo_booleano.construir_matriz()
     
     '''
     Testar modelo booleano
@@ -116,6 +125,101 @@ def main():
         for r in resultados[:10]:
             print(" -", r)
     '''
+
+    #TF-IDF:
+    print("\nEscolha o modelo Tf-Idf:")
+    print("1- Implementação manual")
+    print("2- Sklearn")
+
+    escolha= input("Opção: ")
+    
+    if escolha== "1":
+        print("\n================ TF SCHEMES ================")
+        print("O TF (Term Frequency) define como a frequência de um termo no documento influencia o peso.")
+        print("Escolhe como queres medir essa importância:\n")
+
+        print("1 - Raw TF")
+        print("-> Usa diretamente o número de vezes que o termo aparece.")
+        print("-> Simples, mas favorece documentos longos.")
+
+        print("\n2 - Log TF")
+        print("-> Usa 1 + log(tf).")
+        print("-> Reduz o impacto de termos muito repetidos.")
+
+        print("\n3 - Augmented TF")
+        print("-> Normaliza a frequência entre documentos.")
+        print("-> Evita que documentos longos dominem o ranking.\n")
+
+        tf_choice = input("Escolha TF (1/2/3): ")
+
+
+        print("\n================ IDF SCHEMES ================")
+        print("O IDF mede o quão raro um termo é no corpus.")
+        print("Termos raros têm maior peso.\n")
+
+        print("1 - Standard IDF")
+        print("    -> log(N / df)")
+        print("    -> Penaliza termos muito comuns.")
+
+        print("\n2 - Smooth IDF")
+        print("    -> log(1 + N / df)")
+        print("    -> Versão mais estável numericamente.")
+
+        print("\n3 - Probabilistic IDF")
+        print("    -> log((N - df) / df)")
+        print("    -> Dá mais peso a termos realmente discriminativos.\n")
+
+        idf_choice = input("Escolha IDF (1/2/3): ")
+
+        #mapeamento das escolhas
+        tf_map = {
+            "1": "raw",
+            "2": "log",
+            "3": "augmented"
+        }
+
+        idf_map = {
+            "1": "standard",
+            "2": "smooth",
+            "3": "probabilistic"
+        }
+        modelo_tfidf= TFIDF(indice,
+          documentos=documentos_indexados,
+          tf_scheme=tf_map[tf_choice],
+          idf_scheme=idf_map[idf_choice],
+          remove_stopwords=remover_sw,
+          normalization_method=metodo_norm,
+          language="english"  
+        )
+        matriz= modelo_tfidf.gerar_matriz_similaridade()
+        #print(matriz)
+        
+        
+
+    elif escolha =="2":
+        modelo_tfidf= TFIDF_Sklearn(
+          documentos_processados=documentos_indexados,
+          remove_stopwords=remover_sw,
+          normalization_method=metodo_norm,
+          language="english"  
+        )
+    else:
+        print("Opção inválida.")
+        return
+    
+    '''
+    Testar TF-IDF
+    '''
+    while True:
+        query = input("Query: ")
+
+        if query.lower() == "exit":
+            break
+
+        resultados = modelo_tfidf.rank_documentos(query)
+
+        for doc_id, score in resultados[:10]:
+            print(doc_id, score)
 
 if __name__ == "__main__":
     main()
