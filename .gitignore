@@ -21,3 +21,4 @@ Thumbs.db
 
 # Output files
 scraper_results.json
+processed_corpus.json
