@@ -6,13 +6,42 @@
     <title>Resultados - RepositórioUM</title>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Estilos adicionais para os novos filtros */
+        .tfidf-extra-filters {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+        }
+        .tfidf-extra-filters h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            color: var(--primary-red);
+        }
+        .score-tag {
+            display: inline-block;
+            background: #fff0f0;
+            color: var(--primary-red);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border: 1px solid #ffcccc;
+        }
+        .hidden {
+            display: none !important;
+        }
+    </style>
 </head>
 <body>
     <header class="results-header">
         <div class="header-content">
-            <h2 class="mini-logo" onclick="window.location.href='/'">Repositório<span>UM</span></h2>
-            <form action="/" class="search-box-top" onsubmit="search(event)">
-                <input type="text" name="query" value="Processamento de Linguagem Natural">
+            <h2 class="mini-logo" style="cursor:pointer" onclick="window.location.href='/'">Repositório<span>UM</span></h2>
+            <form action="#" class="search-box-top" onsubmit="handleTopSearch(event)">
+                <input type="text" id="top-query" name="query" placeholder="Pesquisar...">
                 <button type="submit">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
@@ -25,198 +54,211 @@
 
     <div class="results-layout">
         <aside class="filters-sidebar">
-            <h3>Filtros</h3>
+            <h3>Configurações</h3>
             
-           <div style="display: flex; align-items: center; gap: 6px;">
-                <select id="algorithm">
-                    <option value="tfidf_custom">TF-IDF Personalizado</option>
-                    <option value="sklearn">Scikit-Learn</option>
+            <div class="filter-group">
+                <label for="algorithm">Algoritmo de Pesquisa</label>
+                <select id="algorithm" class="algo-select">
                     <option value="boolean">Booleano</option>
+                    <option value="tfidf_custom">TF-IDF Personalizado</option>
+                    <option value="tfidf_sklearn">TF-IDF (Sklearn)</option>
                 </select>
-
-                <i class="fa-solid fa-circle-info"
-                title="TF-IDF → relevância por frequência de termos&#10;Scikit-Learn → implementação otimizada&#10;Booleano → usa AND, OR, NOT">
-                </i>
             </div>
 
-            <div class="filter-group">
-                <label>Processamento</label>
-                <div class="checkbox-item"><input type="checkbox" value="stemming"> Stemming</div>
-                <div class="checkbox-item"><input type="checkbox" value="lematizacao" checked> Lematização</div>
-                <div class="checkbox-item"><input type="checkbox" value="stopwords" checked> Stop Words</div>
-            </div>
-
-            <div class="filter-group">
-                <label>Ano de Publicação: <span id="year-display">1950 - 2026</span></label>
-                <div class="range-slider-container">
-                    <input type="range" min="1950" max="2026" value="1950" id="year-min" class="slider">
-                    <input type="range" min="1950" max="2026" value="2026" id="year-max" class="slider">
+            <!-- Filtros Extra para TF-IDF Personalizado -->
+            <div id="tfidf-custom-options" class="tfidf-extra-filters hidden">
+                <h4>Pesos TF-IDF</h4>
+                <div class="filter-group">
+                    <label>Esquema TF</label>
+                    <select id="tf-weighting" class="algo-select">
+                        <option value="raw">Raw Count (Frequência)</option>
+                        <option value="log">Logarithmic (1 + log tf)</option>
+                        <option value="binary">Binary (0 ou 1)</option>
+                        <option value="augmented">Augmented</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Esquema IDF</label>
+                    <select id="idf-weighting" class="algo-select">
+                        <option value="idf">Standard IDF</option>
+                        <option value="none">Sem IDF (Apenas TF)</option>
+                    </select>
                 </div>
             </div>
 
-            <div class="edu-box">
-                <small><i class="fa-solid fa-circle-info"></i> O score representa a similaridade do cosseno entre a sua query e o documento. [cite: 62]</small>
+            <div class="filter-group">
+                <label>Processamento de Texto</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="stemming"> Stemming
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="lematizacao" checked> Lematização
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="stopwords" checked> Remover Stopwords
+                    </label>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label>Ano de Publicação</label>
+                <div class="range-slider-container">
+                    <input type="range" id="year-min" min="1950" max="2026" value="1950">
+                    <input type="range" id="year-max" min="1950" max="2026" value="2026">
+                </div>
+                <div class="range-values">
+                    <span id="year-min-val">1950</span> - <span id="year-max-val">2026</span>
+                </div>
             </div>
         </aside>
 
-        <main class="results-main">
-            <p class="results-count">A carregar resultados do RepositóriUM...</p>
+        <main class="results-content">
+            <div id="search-stats" class="search-stats">
+                A carregar resultados...
+            </div>
             
-            <section id="results-list" class="results-list">
-                
-            </section>
+            <div id="results-container">
+                <!-- Os resultados serão inseridos aqui via JS -->
+            </div>
         </main>
     </div>
 
     <script>
-        // 1. Lógica Visual: Barra de Intervalo de Anos
-        const minSlider = document.getElementById('year-min');
-        const maxSlider = document.getElementById('year-max');
-        const display = document.getElementById('year-display');
+        // Inicialização ao carregar a página
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const query = urlParams.get('query');
+            const method = urlParams.get('method') || 'tfidf_sklearn';
 
-        function updateYears() {
-            let v1 = parseInt(minSlider.value);
-            let v2 = parseInt(maxSlider.value);
-            if (v1 > v2) [v1, v2] = [v2, v1];
-            display.innerText = `${v1} - ${v2}`;
-        }
-
-        minSlider.oninput = updateYears;
-        maxSlider.oninput = updateYears;
-
-        // 2. Lógica de Pesquisa e API
-        
-        // Captura os elementos uma única vez
-        const resultsContainer = document.getElementById("results-list");
-        const countElem = document.querySelector('.results-count');
-
-        // LER PARÂMETROS DA URL (Executado ao abrir a página)
-        const urlParams = new URLSearchParams(window.location.search);
-        const queryParam = urlParams.get('query');
-        const methodParam = urlParams.get('method');
-
-        // Se a página abrir com query na URL (vinda da index), pesquisa logo
-        if (queryParam) {
-            document.querySelector('input[name="query"]').value = queryParam;
-            if(methodParam) document.getElementById("algorithm").value = methodParam;
-            performSearch(queryParam, methodParam || "tfidf_custom");
-        }
-
-    // Função que vai buscar os dados à API Python
-async function performSearch(query, method) {
-        // 1. Captura os elementos do DOM
-        const resultsContainer = document.getElementById("results-list");
-        const countElem = document.querySelector('.results-count');
-        const yearMin = document.getElementById('year-min').value;
-        const yearMax = document.getElementById('year-max').value;
-
-        // CAPTURA DO ESTADO DAS CHECKBOXES
-        // Nota: Certifica-te que no teu HTML as checkboxes têm value="stemming", "lematizacao" e "stopwords"
-        const stemming = document.querySelector('input[value="stemming"]')?.checked || false;
-        const lemma = document.querySelector('input[value="lematizacao"]')?.checked || false;
-        const sw = document.querySelector('input[value="stopwords"]')?.checked || false;
-
-        // Feedback visual enquanto carrega
-        resultsContainer.innerHTML = "<p>A carregar resultados...</p>";
-
-        try {
-            // 2. Faz o pedido à API com todos os parâmetros, incluindo os novos filtros de NLP[cite: 3]
-            const url = `http://127.0.0.1:8000/search?query=${encodeURIComponent(query)}` + 
-                        `&method=${method}` +
-                        `&year_min=${yearMin}` +
-                        `&year_max=${yearMax}` +
-                        `&stemming=${stemming}` +
-                        `&lematizacao=${lemma}` +
-                        `&stopwords=${sw}`;
-
-            const response = await fetch(url);
-            const data = await response.json();
-
-            // 3. Limpa o contentor de resultados
-            resultsContainer.innerHTML = "";
-
-            // 4. Verifica se há resultados
-            if (!data.results || data.results.length === 0) {
-                countElem.innerText = `0 resultados encontrados para "${query}"`;
-                resultsContainer.innerHTML = "<div class='no-results'>Nenhum documento encontrado para os filtros selecionados.</div>";
-                return;
+            if (query) {
+                document.getElementById('top-query').value = query;
+                document.getElementById('algorithm').value = method;
+                toggleTfIdfOptions(method);
+                performSearch(query, method);
             }
 
-            // 5. Atualiza o contador
-            countElem.innerText = `Encontrados ${data.results.length} resultados`;
+            // Listeners para os sliders de ano
+            const minSlider = document.getElementById('year-min');
+            const maxSlider = document.getElementById('year-max');
+            const minVal = document.getElementById('year-min-val');
+            const maxVal = document.getElementById('year-max-val');
 
-            // 6. Itera sobre os resultados e cria os cartões (Cards)
-            data.results.forEach(item => {
-                // Garantir que autores é uma string legível
-                let authorsStr = "Autores desconhecidos";
-                if (item.authors) {
-                    authorsStr = Array.isArray(item.authors) ? item.authors.join(", ") : item.authors;
+            minSlider.addEventListener('input', () => {
+                if (parseInt(minSlider.value) > parseInt(maxSlider.value)) minSlider.value = maxSlider.value;
+                minVal.textContent = minSlider.value;
+            });
+
+            maxSlider.addEventListener('input', () => {
+                if (parseInt(maxSlider.value) < parseInt(minSlider.value)) maxSlider.value = minSlider.value;
+                maxVal.textContent = maxSlider.value;
+            });
+
+            // Disparar nova pesquisa ao soltar o slider
+            [minSlider, maxSlider].forEach(slider => {
+                slider.addEventListener('change', () => triggerSearch());
+            });
+
+            // Listener para mudança de algoritmo
+            document.getElementById('algorithm').addEventListener('change', function() {
+                toggleTfIdfOptions(this.value);
+                triggerSearch();
+            });
+
+            // Listeners para checkboxes e selects extras
+            document.querySelectorAll('input[type="checkbox"], #tf-weighting, #idf-weighting').forEach(el => {
+                el.addEventListener('change', () => triggerSearch());
+            });
+        });
+
+        function toggleTfIdfOptions(method) {
+            const optionsDiv = document.getElementById('tfidf-custom-options');
+            if (method === 'tfidf_custom') {
+                optionsDiv.classList.remove('hidden');
+            } else {
+                optionsDiv.classList.add('hidden');
+            }
+        }
+
+        function handleTopSearch(event) {
+            event.preventDefault();
+            triggerSearch();
+        }
+
+        function triggerSearch() {
+            const query = document.getElementById('top-query').value;
+            const method = document.getElementById('algorithm').value;
+            performSearch(query, method);
+        }
+
+        async function performSearch(query, method) {
+            if (!query) return;
+
+            const stats = document.getElementById('search-stats');
+            const container = document.getElementById('results-container');
+            
+            stats.textContent = "A pesquisar...";
+
+            // Capturar filtros
+            const stemming = document.getElementById('stemming').checked;
+            const lematizacao = document.getElementById('lematizacao').checked;
+            const stopwords = document.getElementById('stopwords').checked;
+            const yearMin = document.getElementById('year-min').value;
+            const yearMax = document.getElementById('year-max').value;
+            
+            const tfWeighting = document.getElementById('tf-weighting').value;
+            const idfWeighting = document.getElementById('idf-weighting').value;
+
+            // Construir URL
+            const params = new URLSearchParams({
+                query: query,
+                method: method,
+                year_min: yearMin,
+                year_max: yearMax,
+                stemming: stemming,
+                lematizacao: lematizacao,
+                stopwords: stopwords,
+                tf_weighting: tfWeighting,
+                idf_weighting: idfWeighting
+            });
+
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/search?${params}`);
+                const data = await response.json();
+
+                stats.textContent = `Encontrados ${data.results.length} resultados para "${query}" (${method})`;
+                
+                container.innerHTML = "";
+                if (data.results.length === 0) {
+                    container.innerHTML = "<p class='no-results'>Não foram encontrados documentos para esta pesquisa.</p>";
+                    return;
                 }
 
-                // Criar o template do card
-                const card = `
-                    <article class="result-card">
-                        <span class="score-badge">Score: ${item.score ? item.score.toFixed(2) : '1.0'}</span>
-                        <h3 class="result-title">
-                            <a href="${item.url || '#'}" target="_blank">${item.title || 'Sem título'}</a>
-                        </h3>
-                        <p class="result-authors">${authorsStr}</p>
-                        <p class="result-snippet">${item.abstract ? item.abstract.substring(0, 300) + '...' : 'Sem resumo disponível.'}</p>
-                        <div class="result-footer">
-                            <span><i class="fa-regular fa-calendar"></i> ${item.year || 'N/A'}</span>
-                            <a href="${item.document_link || '#'}" class="pdf-link" target="_blank">
-                                <i class="fa-solid fa-file-pdf"></i> PDF Full Text
-                            </a>
+                data.results.forEach(doc => {
+                    const card = document.createElement('div');
+                    card.className = 'result-card';
+                    
+                    const scoreHtml = doc.score ? `<span class="score-tag">Score: ${doc.score.toFixed(4)}</span>` : '';
+                    
+                    card.innerHTML = `
+                        <h3 class="result-title"><a href="#">${doc.title}</a></h3>
+                        <p class="result-authors">${doc.authors || 'Autores desconhecidos'}</p>
+                        <p class="result-abstract">${doc.abstract ? doc.abstract.substring(0, 300) + '...' : 'Sem resumo.'}</p>
+                        <div class="result-metadata">
+                            <span><i class="fa-solid fa-calendar"></i> ${doc.year || 'N/A'}</span>
+                            ${scoreHtml}
+                            <span style="margin-left: 15px; font-size: 0.85rem; color: #777;">DOI: ${doc.doi || 'N/A'}</span>
                         </div>
-                    </article>
-                `;
-                
-                // Inserir no container
-                resultsContainer.innerHTML += card;
-            });
+                    `;
+                    container.appendChild(card);
+                });
 
-        } catch (error) {
-            console.error("Erro na pesquisa:", error);
-            resultsContainer.innerHTML = "<p style='color:red'>Erro ao ligar ao servidor. Verifica se o app.py está a correr.</p>";
+            } catch (error) {
+                console.error("Erro na API:", error);
+                stats.textContent = "Erro ao ligar ao servidor.";
+                container.innerHTML = "<p>Verifica se o servidor FastAPI está a correr em http://127.0.0.1:8000</p>";
+            }
         }
-    }
-
-        // Fazer pesquisa automática ao largar o slider (evento 'change')
-        minSlider.addEventListener('change', () => {
-            const query = document.querySelector('input[name="query"]').value;
-            const method = document.getElementById("algorithm").value;
-            performSearch(query, method);
-        });
-
-        maxSlider.addEventListener('change', () => {
-            const query = document.querySelector('input[name="query"]').value;
-            const method = document.getElementById("algorithm").value;
-            performSearch(query, method);
-        });
-
-        // Função chamada pelo formulário da própria página de resultados
-        function search(event) {
-            event.preventDefault();
-            const query = document.querySelector('input[name="query"]').value;
-            const method = document.getElementById("algorithm").value;
-            performSearch(query, method);
-        }
-
-        // Faz a pesquisa automaticamente quando mudas o algoritmo no menu lateral
-        document.getElementById("algorithm").addEventListener("change", function() {
-            const query = document.querySelector('input[name="query"]').value;
-            const method = this.value;
-            performSearch(query, method);
-        });
-
-        // Faz a pesquisa automaticamente quando mudas os filtros de processamento (opcional)
-        document.querySelectorAll('.checkbox-item input').forEach(checkbox => {
-            checkbox.addEventListener('change', () => {
-                const query = document.querySelector('input[name="query"]').value;
-                const method = document.getElementById("algorithm").value;
-                performSearch(query, method);
-            });
-        });
     </script>
 </body>
 </html>
