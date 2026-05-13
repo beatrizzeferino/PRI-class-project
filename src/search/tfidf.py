@@ -1,217 +1,308 @@
 import math
-from collections import Counter
 from src.search.nlp import TextProcessor
 
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
-class TFIDFCustom:
-    """
-    Implementação própria de TF-IDF com similaridade do cosseno.
+class TFIDF:
+    def __init__(self, indice, documentos, tf_scheme, idf_scheme, remove_stopwords, normalization_method, language):
+        self.indice = indice
+        self.documentos= documentos # output do CorpusProcessor
+        self.N= indice.num_documentos #numero total de documentos no corpus
 
-    Fórmula usada:
-        tf(t,d)  = count(t,d) / len(d)           (frequência relativa)
-        idf(t)   = log( N / (1 + df(t)) ) + 1    (suavizado para evitar divisão por zero)
-        tfidf    = tf * idf
-    """
+        #weighting schemes escolhidos pelo utilizador
+        self.tf_scheme= tf_scheme
+        self.idf_scheme= idf_scheme
 
-    def __init__(self, remove_stopwords=True, normalization_method='lemma', language='english'):
+        #necessario para processar o texto da query pelo nlp
         self.remove_stopwords = remove_stopwords
         self.normalization_method = normalization_method
         self.language = language
 
         self.nlp = TextProcessor()
-
-        # Estruturas internas
-        self.doc_ids = []           # lista ordenada de doc_ids
-        self.vocab = []             # lista ordenada de termos do vocabulário
-        self.vocab_index = {}       # termo -> índice na lista vocab
-        self.tfidf_matrix = []      # lista de vetores TF-IDF, um por documento
-        self.idf_values = {}        # termo -> valor IDF
-
-    # ------------------------------------------------------------------
-    #  Construção
-    # ------------------------------------------------------------------
-
-    def construir(self, corpus_processado: dict):
+    
+    def calcular_tf_score(self, tf):
         """
-        Recebe o dicionário devolvido pelo CorpusProcessor e constrói
-        a matriz TF-IDF.
-
-        Parâmetros:
-            corpus_processado: {doc_id: {"tokens_pesquisa": [...], ...}}
+        Calcula o peso TF de um termo num documento, atraves de diferentes schemes
         """
-        self.doc_ids = []
-        tokens_por_doc = []
+        if tf == 0:
+            return 0
+        if self.tf_scheme == "raw":
+            return tf
+        elif self.tf_scheme == "binary":
+            return 1
+        elif self.tf_scheme== "log":
+            return 1 + math.log(tf,10)
+        elif self.tf_scheme == "augmented":
+            return 0.5 +0.5 * (tf/ (tf+1))
+        
+        return 1 + math.log(tf,10) # caso nao corresponder a nenhuma das opcoes assumimos o logaritmo pois é a mais usualmente usada
+    
+    def calcular_tf_termo(self, termo):
+        """
+        Calcula o TF para um termo em todos os documentos
+        Devolve um dicionário {doc_id : tf_ponderado}
+        """
+        posting_list = self.indice.obter_posting_list(termo)
+        
+        if not posting_list:
+            return {}
+        
+        tf_scores={}
 
-        # 1. Recolher tokens de cada documento
-        for doc_id, info in corpus_processado.items():
-            self.doc_ids.append(doc_id)
-            tokens_por_doc.append(info.get("tokens_pesquisa", []))
+        #percorre todos os documentos onde o termo aparece
+        for posting in posting_list.postings:
+            doc_id = posting["doc_id"]
+            tf = posting["tf"]
 
-        num_docs = len(self.doc_ids)
+            #aplica o tf score escolhido
+            tf_scores[doc_id] = self.calcular_tf_score(tf)
 
-        # 2. Construir vocabulário
-        vocab_set = set()
-        for tokens in tokens_por_doc:
-            vocab_set.update(tokens)
-        self.vocab = sorted(vocab_set)
-        self.vocab_index = {t: i for i, t in enumerate(self.vocab)}
+        return tf_scores
+    
+    def calcular_idf(self, termo):
+        """
+        Calcula o IDF de um termo
+        """
+        posting_list = self.indice.obter_posting_list(termo)
 
-        # 3. Calcular DF (document frequency) por termo
-        df = Counter()
-        for tokens in tokens_por_doc:
-            for t in set(tokens):
-                df[t] += 1
+        if not posting_list:
+            return 0
+        
+        df = posting_list.df #document frequency
+        
+        #para evitar casos onde se dividiria por 0, para nao rebentar
+        if df== 0:
+            return 0
+        
+        #diferentes schemes que o utilizador escolheu
+        if self.idf_scheme == "standard":
+            return math.log((self.N) / (df), 10) 
+        
+        elif self.idf_scheme == "smooth":
+            return math.log((1 + self.N) / (1 + df),10)
+        
+        elif self.idf_scheme == "probabilistic":
+            if df == self.N:
+                return 0
+            return max(0,math.log((self.N - df)/ df, 10)) #para garantir que nao retorna scores negativos caso df > N/2
+        
+        return math.log((self.N) / (df), 10)  #caso nao corresponda a nenhuma das opcoes retorna a standard pois normalmente é a mais usada
+    
 
-        # 4. Calcular IDF suavizado
-        self.idf_values = {
-            t: math.log(num_docs / (1 + df[t])) + 1
-            for t in self.vocab
-        }
+    def calcular_tfidf_termo(self, termo):
+        """
+        Calcula o TF-IDF de um termo para todos os documentos
+        Devolve {doc_id: tf-idf} para um termo especifico
+        """
 
-        # 5. Construir matriz TF-IDF
-        self.tfidf_matrix = []
-        for tokens in tokens_por_doc:
-            tf_raw = Counter(tokens)
-            total = len(tokens) if tokens else 1
-            vec = [0.0] * len(self.vocab)
-            for t, count in tf_raw.items():
-                if t in self.vocab_index:
-                    tf = count / total
-                    idx = self.vocab_index[t]
-                    vec[idx] = tf * self.idf_values[t]
-            self.tfidf_matrix.append(vec)
+        posting_list= self.indice.obter_posting_list(termo)
+        if not posting_list:
+            return{}
+        
+        idf = self.calcular_idf(termo)
+        
+        tfidf_scores = {}
 
-        print(f"[TF-IDF Custom] Matriz construída: {num_docs} docs × {len(self.vocab)} termos.")
+        for posting in posting_list.postings:
+            doc_id = posting["doc_id"]
+            tf = posting["tf"]
 
-    # ------------------------------------------------------------------
-    #  Pesquisa
-    # ------------------------------------------------------------------
+            tf_score = self.calcular_tf_score(tf)
 
-    def _vetorizar_query(self, query: str) -> list:
-        """Converte a query num vetor TF-IDF usando o vocabulário existente."""
-        tokens = self.nlp.process_text(
+            #TF-IDF = TF * IDF
+            tfidf_scores[doc_id] = tf_score * idf
+
+        return tfidf_scores
+    
+
+    #-------------------Similaridade----------------------------
+    def processar_query(self, query):
+        """
+        Aplica o mesmo processamento NLP usado nos documentos à query
+        """
+
+        return self.nlp.process_text(
             query,
             language=self.language,
             remove_stopwords=self.remove_stopwords,
             normalization_method=self.normalization_method
         )
-        tf_raw = Counter(tokens)
-        total = len(tokens) if tokens else 1
-        vec = [0.0] * len(self.vocab)
-        for t, count in tf_raw.items():
-            if t in self.vocab_index:
-                tf = count / total
-                idx = self.vocab_index[t]
-                vec[idx] = tf * self.idf_values.get(t, 0.0)
-        return vec
 
-    @staticmethod
-    def _cosine_similarity(vec_a: list, vec_b: list) -> float:
-        """Calcula a similaridade do cosseno entre dois vetores."""
-        dot = sum(a * b for a, b in zip(vec_a, vec_b))
-        norm_a = math.sqrt(sum(a * a for a in vec_a))
-        norm_b = math.sqrt(sum(b * b for b in vec_b))
-        if norm_a == 0 or norm_b == 0:
-            return 0.0
-        return dot / (norm_a * norm_b)
-
-    def pesquisar(self, query: str, top_k: int = 50) -> list:
+    def vetor_tfidf_query(self, query_tokens):
         """
-        Pesquisa por similaridade do cosseno.
-
-        Devolve uma lista de dicionários ordenados por score decrescente:
-            [{"doc_id": ..., "score": ...}, ...]
+        Construção do vetor TF-IDF da query
+        Devolve {termo: peso TF-IDF na query}
         """
-        if not query.strip():
-            return []
 
-        query_vec = self._vetorizar_query(query)
+        vetor={}
 
-        # Se o vetor da query for todo zeros (termos desconhecidos), sem resultados
-        if all(v == 0.0 for v in query_vec):
-            return []
+        tf_query = {}
 
-        scores = []
-        for i, doc_vec in enumerate(self.tfidf_matrix):
-            sim = self._cosine_similarity(query_vec, doc_vec)
-            if sim > 0:
-                scores.append({"doc_id": self.doc_ids[i], "score": round(sim, 6)})
+        #calculo do tf da query
+        for termo in query_tokens:
+            tf_query[termo] = tf_query.get(termo, 0) + 1
 
-        scores.sort(key=lambda x: x["score"], reverse=True)
-        return scores[:top_k]
+        #construcao do vetor
+        for termo, tf in tf_query.items():
+            tf_score = self.calcular_tf_score(tf)
+            idf = self.calcular_idf(termo)
 
+            vetor[termo] = tf_score * idf
+        
+        return vetor
+    
+    def vetor_tfidf_documento(self, doc_id, termos):
+        """
+        Constrói o vetor TF-IDF de um documento em específico
+        """
+        vetor= {}
 
-# ----------------------------------------------------------------------
+        for termo in termos:
+            tfidf_dic = self.calcular_tfidf_termo(termo)
 
-class TFIDFSklearn:
-    """
-    Wrapper em torno do TfidfVectorizer do scikit-learn.
-    Útil para comparar com a implementação própria.
-    """
+            if doc_id in tfidf_dic:
+                vetor[termo] = tfidf_dic[doc_id]
+        
+        return vetor
+    
+    def similaridade_cosseno(self, vec_doc, vec_q):
+        """
+        Calcula a similaridade de cosseno entre um vetor de documento e de query
+        """
+        produto= 0
 
-    def __init__(self, remove_stopwords=True, normalization_method='lemma', language='english'):
-        self.remove_stopwords = remove_stopwords
+        #produto escalar
+        for termo in vec_q:
+            if termo in vec_doc:
+                produto += vec_doc[termo] * vec_q[termo]
+
+        norma_doc = math.sqrt(sum(v**2 for v in vec_doc.values()))
+        norma_q = math.sqrt(sum(v**2 for v in vec_q.values()))
+        
+        #evitar divisao por 0
+        if norma_doc == 0 or norma_q == 0:
+            return 0
+        
+        return produto / (norma_doc * norma_q)
+    
+    def rank_documentos(self, query):
+        """
+        Retorna documentos ordenados por relevância à query
+        """
+        query_tokens = self.processar_query(query)
+
+        query_vec= self.vetor_tfidf_query(query_tokens)
+
+        scores= {}
+
+        for doc_id in self.indice.documentos:
+            doc_vec = self.vetor_tfidf_documento(doc_id, query_tokens)
+
+            score= self.similaridade_cosseno(doc_vec, query_vec)
+
+            if score > 0:
+                scores[doc_id] = score
+
+        #ordenacao decrescente por score
+        return sorted(scores.items(), key= lambda x: x[1], reverse=True) #retorna uma lsita de tuplos [(doc_id, score), (doc_id, score)]
+
+    def gerar_matriz_similaridade(self):
+        """
+        Gerar matriz N*N de similaridade entre documentos (REQ-B40)
+        Cada celula (i, j) representa a similaridade entre dois documentos
+        """
+        docs = list(self.indice.documentos.keys())
+        matriz={}
+
+        #pre-calcular vetores de todos os documentos
+        vetores={} #vetores de todos os documentos
+
+        for doc_id in docs:
+            termos= self.documentos[doc_id]["tokens_pesquisa"]
+            vetores[doc_id] = self.vetor_tfidf_documento(doc_id, termos)
+        
+        #calcular similaridades
+        for i, doc_i in enumerate(docs):
+            matriz[doc_i] ={}
+
+            for j, doc_j in enumerate(docs):
+                if j <i:
+                    #reaproveitar a simetria da matriz
+                    matriz[doc_i][doc_j] = matriz[doc_j][doc_i]
+                
+                if doc_i == doc_j:
+                    matriz[doc_i][doc_j] = 1.0
+
+                else:
+                    sim = self.similaridade_cosseno(vetores[doc_i], vetores[doc_j])
+                    matriz[doc_i][doc_j] = sim
+        return matriz
+
+class TFIDF_Sklearn():
+    #TF-IDF mas utilizando a biblioteca sklearn
+    def __init__(self, documentos_processados, remove_stopwords, normalization_method, language):
+        #sklearn trabalha diretamente sobre textos
+        self.documentos = documentos_processados #output do CorpusProcessor
+
+        self.vectorizer= TfidfVectorizer() #objeto do sk-learn que sabe construir o vocabulario, calcular tf e idf e gerar vetores tf-idf
+
+        corpus = self.preparar_corpus()
+        self.matriz_tfidf = self.vectorizer.fit_transform(corpus) #fit aprende o vocabulario, transform transforma documentos em vetores numericos tf-idf, isto leva a uma matriz do tipo n_documento x n_termos
+
+        self.nlp = TextProcessor()
+        self.remove_stopwords= remove_stopwords
         self.normalization_method = normalization_method
         self.language = language
 
-        self.nlp = TextProcessor()
+    def preparar_corpus(self):
+        '''
+        Converte os documentos processados num formato compativel com o sklearn
+        '''
+        
+        #sklearn espera string completas não listas de strings por documento
+        
+        corpus=[]
+        self.doc_ids= []
 
-        try:
-            from sklearn.feature_extraction.text import TfidfVectorizer
-            from sklearn.metrics.pairwise import cosine_similarity
-            self._TfidfVectorizer = TfidfVectorizer
-            self._cosine_similarity = cosine_similarity
-        except ImportError:
-            raise ImportError("scikit-learn não está instalado. Execute: pip install scikit-learn")
+        for doc_id, info in self.documentos.items():
 
-        self.vectorizer = None
-        self.tfidf_matrix = None
-        self.doc_ids = []
+            texto= " ".join(info["tokens_pesquisa"])
 
-    def construir(self, corpus_processado: dict):
-        """
-        Recebe o dicionário do CorpusProcessor e ajusta o TfidfVectorizer.
-        Os tokens já pré-processados são reunidos em strings para o sklearn.
-        """
-        self.doc_ids = []
-        corpus_strings = []
-
-        for doc_id, info in corpus_processado.items():
+            corpus.append(texto)
             self.doc_ids.append(doc_id)
-            tokens = info.get("tokens_pesquisa", [])
-            corpus_strings.append(" ".join(tokens))
+        
+        return corpus
 
-        # analyzer='word' — os tokens já estão pré-processados (não reaplicar NLP)
-        self.vectorizer = self._TfidfVectorizer(analyzer='word', token_pattern=r'\S+')
-        self.tfidf_matrix = self.vectorizer.fit_transform(corpus_strings)
-
-        print(f"[TF-IDF sklearn] Matriz construída: {len(self.doc_ids)} docs × {self.tfidf_matrix.shape[1]} termos.")
-
-    def pesquisar(self, query: str, top_k: int = 50) -> list:
-        """
-        Pesquisa por similaridade do cosseno usando o sklearn.
-
-        Devolve lista de {"doc_id": ..., "score": ...} ordenada por score.
-        """
-        if not query.strip() or self.vectorizer is None:
-            return []
-
-        # Pré-processar a query da mesma forma que os documentos
-        tokens = self.nlp.process_text(
+    def rank_documentos(self,query):
+        '''
+        Executa a pesquisa de documentos relevantes para uma query
+        Retorna uma lista de tuplos (doc_id, score) ordenada por relevancia decrescente
+        '''
+        query_tokens = self.nlp.process_text(
             query,
             language=self.language,
             remove_stopwords=self.remove_stopwords,
             normalization_method=self.normalization_method
+        )   
+
+        query_texto = " ".join(query_tokens)
+
+        query_vec = self.vectorizer.transform([query_texto]) # nao aprende novo vocabulario nem recalcula IDF mas sim transforma a query usando o vocabulario já aprendido nos documentos e os idfs para calcular o vetor da query
+
+        scores = cosine_similarity(query_vec, self.matriz_tfidf)[0] #cosine_similarity da uma lista de lista e queremos apenas a lista interior
+
+        ranking = sorted(
+            zip(self.doc_ids, scores), #junta o doc_id e o seu respetivo score
+            key=lambda x: x[1],
+            reverse=True
         )
-        query_str = " ".join(tokens)
 
-        query_vec = self.vectorizer.transform([query_str])
-        sims = self._cosine_similarity(query_vec, self.tfidf_matrix).flatten()
-
-        resultados = [
-            {"doc_id": self.doc_ids[i], "score": round(float(sims[i]), 6)}
-            for i in range(len(self.doc_ids))
-            if sims[i] > 0
+        #remover scores 0
+        ranking = [
+            (doc_id, score)
+            for doc_id, score in ranking
+            if score > 0
         ]
-        resultados.sort(key=lambda x: x["score"], reverse=True)
-        return resultados[:top_k]
+
+        return ranking
