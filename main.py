@@ -1,11 +1,12 @@
 import json
 import time
 from src.scraper.scraper import UMinhoDSpace8Scraper
-from src.scraper.extrair_pdfs import add_texto_scraper
 from src.search.corpusProcessor import CorpusProcessor
 from src.search.booleano import ModeloBooleano
 from src.search.indice import IndiceInvertido
 from src.search.tfidf import TFIDF, TFIDF_Sklearn
+from src.search.processorPdfs import ProcessorPdfs
+from src.scraper.extrair_pdfs import PDFExtractor
 
 def load_config(config_path="config.json"):
     """Lê as configurações do ficheiro JSON."""
@@ -34,20 +35,6 @@ def main():
     
     final_results = scraper_instance.scrape()
 
-    print("\nA iniciar a extração de texto dos pdfs.")
-    add_texto_scraper(
-        scraper_file=config["output_file"],
-        output_file=config["output_file"],
-        limite=20
-    )
-    print("\nExtração de PDFs concluída.")
-    
-    end_time = time.time()
-    tempo_total= round((end_time-start_time)/60,2)
-
-    print(f"\n Extração concluída em {tempo_total} minutos.")
-    print(f"Total de {len(final_results)} artigos guardados no ficheiro '{config['output_file']}'.")
-
     # --- 2. FASE DE CONFIGURAÇÃO (enquanto ainda nao esta integrado com interface) ---
     print(f"\n{'='*20} CONFIGURAÇÃO {'='*20}")
     
@@ -66,10 +53,24 @@ def main():
     print(f"\n{'='*20} 3. INDEXAÇÃO E PROCESSAMENTO NLP {'='*20}")
     
     processador = CorpusProcessor() # O Indexer já carrega o TextProcessor internamente
-    
     # Processamos o dataset com as escolhas feitas acima
     documentos_indexados = processador.processar_dataset(
         config['output_file'],
+        remove_stopwords=remover_sw,
+        normalization_method=metodo_norm,
+        caminho_saida="processed_corpus.json"
+    )
+
+    extrator = PDFExtractor(output_dir="textos_pdfs")
+    extrator.extrair_pdfs(
+        corpus_file="processed_corpus.json", 
+        output_file="processed_corpus.json", # Atualiza o JSON com caminhos dos TXT brutos
+        limite=20
+    )
+
+    processorPdfs = ProcessorPdfs(processed_dir="textos_processados")
+    documentos_indexados = processorPdfs.processar_e_guardar_tokens(
+        caminho_corpus_base="processed_corpus.json",
         remove_stopwords=remover_sw,
         normalization_method=metodo_norm
     )
@@ -88,7 +89,6 @@ def main():
         
         # Mostra apenas os primeiros 15 tokens para conferir a "limpeza"
         print(f"   ✨ Amostra de Tokens (limpos): {info['tokens_pesquisa'][:15]}...")
-        
     print(f"\n{'='*60}")
     print(f"✅ Processamento concluído com sucesso!")
 
