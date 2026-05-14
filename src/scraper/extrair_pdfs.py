@@ -1,64 +1,102 @@
 import json
 import os
 import requests
-import subprocess #para executar comandos como se fosse o terminal
+import subprocess
 import tempfile
+import re
 
-def pdf_to_text(pdf):
-    with tempfile.NamedTemporaryFile(delete= False, suffix=".pdf") as tmp_file: #cria um ficheiro temporario com a extensao .pdf, onde vamos guardar o pdf
-        tmp_file.write(pdf)
-        pdf_path =tmp_file.name #guarda o caminho do ficheiro temporario
-        
-    txt_path =pdf_path.replace(".pdf", ".txt")
+class PDFExtractor:
+    def __init__(self, output_dir="textos_pdfs"):
+        """
+        Inicializa o extrator de PDFs e garante que a pasta de destino existe.
+        """
+        self.output_dir = output_dir
+        os.makedirs(self.output_dir, exist_ok=True)
 
-    #executar pdftotext
-    subprocess.run(["pdftotext", pdf_path, txt_path], check=True) #check permite que se falhar, lança erro automaticamente
+    def _pdf_to_text(self, pdf_bytes, caminho_txt_final):
+        """
+        Converte os bytes do PDF baixado num ficheiro TXT físico.
+        """
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
+            tmp_file.write(pdf_bytes)
+            pdf_path = tmp_file.name
+            
+        subprocess.run(["pdftotext", pdf_path, caminho_txt_final], check=True)
+        os.remove(pdf_path)
 
-    with open(txt_path, "r", encoding="utf-8", errors="ignorw") as f: #se houver erros, tipo caracteres estranhos ignora-os
-        texto = f.read()
-
-    #apagar ficheiros temporarios
-    os.remove(pdf_path)
-    os.remove(txt_path)
-
-    return texto
-
-
-def add_texto_scraper(scraper_file, output_file, limite):
-    with open(scraper_file, "r", encoding="utf-8") as f:
-        scraper= json.load(f)
-    
-    n_pdfs_extraidos = sum(1 for doc in scraper if doc.get("pdf_txt") is not None)
-
-    if n_pdfs_extraidos >= limite:
-        print("Já foram previamente extraidos 20 pdfs.")
-        return
-
-    count = n_pdfs_extraidos
-    i=0
-    while i< len(scraper) and count <limite:
-        doc= scraper[i]
-        i+=1
-        url = doc.get("document_link")
-
-        #se nao captou o link para o pdf
-        if url=="N/A":
-            continue
-
+    def extrair_pdfs(self, corpus_file, output_file, limite=20):
+        """
+        Método principal: Lê o JSON (Corpus), processa os PDFs necessários e atualiza o JSON.
+        """
         try:
-            print(f"A transformar PDF: {doc.get('title')}")
+            with open(corpus_file, "r", encoding="utf-8") as f:
+                corpus = json.load(f) 
+        except FileNotFoundError:
+            print(f"[Erro] O ficheiro {corpus_file} não foi encontrado.")
+            return
 
-            r = requests.get(url)
-            r.raise_for_status()
+        n_pdfs_extraidos = sum(1 for doc in corpus.values() if doc.get("has_pdf_txt") is True)
 
-            texto = pdf_to_text(r.content)
-            doc["pdf_txt"] = texto
+        if n_pdfs_extraidos >= limite:
+            print(f"Já foram previamente extraídos {limite} pdfs.")
+            return
 
-            count += 1
+        count = n_pdfs_extraidos
+        print(f"A iniciar... Faltam extrair {limite - count} PDFs.")
 
-        except Exception as e:
-            print(f"Erro no documento {doc.get('title')}: {e}")
-            doc["pdf_txt"] = None
+        for doc_id, doc in corpus.items():
+            if count >= limite:
+                break # Para o ciclo quando atingir o limite
 
-    with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(scraper, f, ensure_ascii=False, indent=2)
+            url = doc.get("link") or doc.get("url")
+
+            # Ignorar se não tem link ou já tem o PDF extraído
+            if not url or url == "N/A" or doc.get("has_pdf_txt"):
+                continue
+
+            try:
+                print(f"[{count+1}/{limite}] A descarregar PDF para: {doc_id}...")
+
+                # Fazer o download (com o disfarce de navegador)
+                headers = {'User-Agent': 'Mozilla/5.0'}
+                r = requests.get(url, headers=headers, timeout=15) 
+                r.raise_for_status()
+
+                #verifica se o ficheiro é um pdf
+                if not r.content.startswith(b'%PDF'):
+                    print("   -> [Aviso] O ficheiro descarregado não é um PDF válido. A ignorar...")
+                    doc["has_pdf_txt"] = False
+                    continue # Volta ao topo do ciclo e passa para o próximo artigo
+
+                safe_doc_id = str(doc_id).replace("/", "_").replace("\\", "_")
+                nome_ficheiro = f"{safe_doc_id}.txt"
+                caminho_completo = os.path.join(self.output_dir, nome_ficheiro)
+
+                if os.path.exists(caminho_completo):
+                    if not doc.get("has_pdf_txt"):
+                        doc["has_pdf_txt"] = True
+                        doc["pdf_txt_path"] = caminho_completo
+                    continue
+
+                # Processar
+                self._pdf_to_text(r.content, caminho_completo)
+
+                # Atualizar Dicionário
+                doc["has_pdf_txt"] = True
+                doc["pdf_txt_path"] = caminho_completo
+
+                print(f"   -> Guardado em: {caminho_completo}")
+                count += 1
+
+            except Exception as e:
+                print(f"   -> [Erro] Falha ao processar: {e}")
+                doc["has_pdf_txt"] = False 
+            
+
+        with open(output_file, "w", encoding="utf-8") as f:
+            json.dump(corpus, f, ensure_ascii=False, indent=4)
+            
+        print(f"\nProcesso concluído! Total de PDFs processados: {count}")
+
+
+    
