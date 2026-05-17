@@ -1,10 +1,11 @@
-import re
-import json
+import os
 from src.search.nlp import TextProcessor
 
 class ModeloBooleano:
-    def __init__(self, corpus_processado, remove_stopwords, normalization_method, language):
-        self.corpus = corpus_processado  # output do corpusProcessor
+    def __init__(self, corpus_processado, pasta_tokens_pdf, remove_stopwords, normalization_method, language):
+        self.corpus = corpus_processado  #json processed_corpus.json
+
+        self.pasta_tokens_pdf = pasta_tokens_pdf #pasta onde estao os pdfs processados
 
         self.termos_unicos = []   # lista ordenada de termos (linhas)
         self.doc_ids = []         # lista dos doc_ids (colunas)
@@ -27,6 +28,29 @@ class ModeloBooleano:
 
         self.nlp = TextProcessor()
 
+    def carregar_tokens_documento(self, doc_id, info_doc):
+        """
+        Junta os tokens do scraper + tokens do pdf processado de um determinado documento
+        """
+
+        tokens = list(info_doc.get("tokens_pesquisa", []))
+
+        doc_id_pdf = str(doc_id).replace("/", "_").replace("\\", "_")
+        nome_ficheiro = f"{doc_id_pdf}_tokens.txt"
+
+        caminho_pdf= os.path.join(self.pasta_tokens_pdf, nome_ficheiro)
+
+        if os.path.exists(caminho_pdf):
+            try:
+                with open(caminho_pdf, "r", encoding="utf-8") as f:
+                    tokens_pdf = f.read().strip().split()
+
+                    tokens.extend(tokens_pdf)
+            except Exception as e:
+                print(f"[Erro PDF Tokens] {doc_id}: {e}")
+
+        return tokens
+
     def construir_matriz(self):
         """
         Constrói a matriz termo-documento: lista de listas onde cada lista
@@ -40,7 +64,7 @@ class ModeloBooleano:
         for doc_id, doc in self.corpus.items():
             self.doc_ids.append(doc_id)
 
-            tokens = doc["tokens_pesquisa"]
+            tokens = self.carregar_tokens_documento(doc_id, doc)
             tokens_set = set(tokens)
 
             docs_tokens.append(tokens_set)
@@ -64,7 +88,7 @@ class ModeloBooleano:
                 self.matriz[termo_indice][doc_indice] = 1
 
         # BUGFIX: era self.documentos (não existe) — correto é self.doc_ids
-        print(f"Matriz termo-documento construída: {len(self.termos_unicos)} termos x {len(self.doc_ids)} documentos.")
+        print(f"[Modelo Booleano] Matriz termo-documento construída: {len(self.termos_unicos)} termos x {len(self.doc_ids)} documentos.")
 
 
 # =========== Resoluções de Queries ===============================================

@@ -34,9 +34,15 @@ class PDFExtractor:
         except FileNotFoundError:
             print(f"[Erro] O ficheiro {corpus_file} não foi encontrado.")
             return
+        
+        #contar o nº de PDFs já extraidos para a pasta
+        ficheiros_existentes=[
+            f for f in os.listdir(self.output_dir)
+            if f.endswith(".txt")
+        ]
 
-        n_pdfs_extraidos = sum(1 for doc in corpus.values() if doc.get("has_pdf_txt") is True)
-
+        n_pdfs_extraidos= len(ficheiros_existentes)
+        
         if n_pdfs_extraidos >= limite:
             print(f"Já foram previamente extraídos {limite} pdfs.")
             return
