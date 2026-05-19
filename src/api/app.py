@@ -63,6 +63,8 @@ db_por_titulo = {doc.get('titulo', '').strip(): doc for doc in data if doc.get('
 with open(DATA_PATH, "r", encoding="utf-8") as f:
     corpus_dict = json.load(f)
 
+db_documentos = corpus_dict 
+
 # 4. Modelo Booleano
 modelo_bool = ModeloBooleano(
     corpus_processado=corpus_dict,
