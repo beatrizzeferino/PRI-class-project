@@ -60,13 +60,8 @@ db_por_titulo = {doc.get('titulo', '').strip(): doc for doc in data if doc.get('
 
 # 3. Processar o corpus — o CorpusProcessor lê o ficheiro diretamente e espera
 #    uma lista, por isso usamos um ficheiro temporário com os dados convertidos.
-processor = CorpusProcessor()
-with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False, encoding='utf-8') as tmp:
-    json.dump(data, tmp, ensure_ascii=False)
-    tmp_path = tmp.name
-
-corpus_dict = processor.processar_dataset(tmp_path)
-os.remove(tmp_path)
+with open(DATA_PATH, "r", encoding="utf-8") as f:
+    corpus_dict = json.load(f)
 
 # 4. Modelo Booleano
 modelo_bool = ModeloBooleano(
