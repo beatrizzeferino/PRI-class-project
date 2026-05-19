@@ -165,11 +165,15 @@ def main():
         print("    -> log(N / df)")
         print("    -> Penaliza termos muito comuns.")
 
-        print("\n2 - Smooth IDF")
+        print("\n2 - Binary IDF")
+        print("    -> 1 se tf > 0, caso contrário 0")
+        print("    -> Considera apenas se o termo existe no documento, ignorando repetições.")
+
+        print("\n3 - Smooth IDF")
         print("    -> log(1 + N / df)")
         print("    -> Versão mais estável numericamente.")
 
-        print("\n3 - Probabilistic IDF")
+        print("\n4 - Probabilistic IDF")
         print("    -> log((N - df) / df)")
         print("    -> Dá mais peso a termos realmente discriminativos.\n")
 
@@ -178,8 +182,9 @@ def main():
         #mapeamento das escolhas
         tf_map = {
             "1": "raw",
-            "2": "log",
-            "3": "augmented"
+            "2": "binary",
+            "3": "log",
+            "4": "augmented"
         }
 
         idf_map = {
