@@ -146,11 +146,15 @@ def main():
         print("    -> Usa diretamente o número de vezes que o termo aparece.")
         print("    -> Simples, mas favorece documentos longos.")
 
-        print("\n2 - Log TF")
+        print("\n2 - Binary IDF")
+        print("    -> 1 se tf > 0, caso contrário 0")
+        print("    -> Considera apenas se o termo existe no documento, ignorando repetições.")
+
+        print("\n3 - Log TF")
         print("    -> Usa 1 + log(tf).")
         print("    -> Reduz o impacto de termos muito repetidos.")
 
-        print("\n3 - Augmented TF")
+        print("\n4 - Augmented TF")
         print("    -> Normaliza a frequência entre documentos.")
         print("    -> Evita que documentos longos dominem o ranking.\n")
 
@@ -165,15 +169,11 @@ def main():
         print("    -> log(N / df)")
         print("    -> Penaliza termos muito comuns.")
 
-        print("\n2 - Binary IDF")
-        print("    -> 1 se tf > 0, caso contrário 0")
-        print("    -> Considera apenas se o termo existe no documento, ignorando repetições.")
-
-        print("\n3 - Smooth IDF")
+        print("\n2 - Smooth IDF")
         print("    -> log(1 + N / df)")
         print("    -> Versão mais estável numericamente.")
 
-        print("\n4 - Probabilistic IDF")
+        print("\n3 - Probabilistic IDF")
         print("    -> log((N - df) / df)")
         print("    -> Dá mais peso a termos realmente discriminativos.\n")
 
