@@ -82,7 +82,7 @@ modelo_bool.construir_matriz()
 try:
     from src.search.indice import IndiceInvertido
     indice = IndiceInvertido()
-    indice.construir_de_indexer(corpus_dict)
+    indice.construir(corpus_dict)
     _indice_disponivel = True
     print("[OK] Índice invertido construído com sucesso.")
 except Exception as e:
