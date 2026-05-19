@@ -3,37 +3,34 @@ import os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), r'C:\Users\carol\Desktop\Informática Médica\2º semestre\Processamento e Recuperação de Informação\Aulas práticas\Projeto\PRI-class-project')))
 
-from src.search.booleano import modeloBooleano
+from src.search.booleano import ModeloBooleano
 import json
+corpus_teste = {
+    "doc1": {
+        "tokens_pesquisa": ["cancer", "treatment", "drug"],
+        "titulo": "Cancer treatment with drug"
+    },
+    "doc2": {
+        "tokens_pesquisa": ["cancer", "diagnosis"],
+        "titulo": "Cancer diagnosis methods"
+    },
+    "doc3": {
+        "tokens_pesquisa": ["heart", "disease"],
+        "titulo": "Heart disease study"
+    }
+}
 
-def teste_booleano():
+modelo = ModeloBooleano(
+    corpus_processado=corpus_teste,
+    remove_stopwords=False,
+    normalization_method=None,
+    language="english"
+)
 
-    test_data = [
-            {"title": "Gato preto", "abstract": "Um gato de cor preta.", "authors": ["Joao"], "year": "2020"},
-            {"title": "Cão branco", "abstract": "Um cão de cor branca.", "authors": ["Maria"], "year": "2021"},
-            {"title": "Gato e Cão", "abstract": "Uma história sobre um gato e um cão.", "authors": ["Joao", "Maria"], "year": "2022"}
-        ]
-        
-    with open("test_docs.json", "w") as f:
-        json.dump(test_data, f)
+modelo.construir_matriz()
 
-    modelo = modeloBooleano()
-    modelo.construir_matriz("test_docs.json")
-
-    testes = [
-            ("Simples", "gato"),                      # Deve trazer Doc 1 e 3
-            ("AND Explícito", "gato AND cão"),        # Deve trazer apenas Doc 3
-            ("AND Implícito", "gato cão"),  # Deve trazer apenas Doc 3
-            ("OR", "preto OR branco"),                # Deve trazer Doc 1 e 2
-            ("NOT", "gato NOT cão"),                  # Deve trazer apenas Doc 1
-            ("Precedência", "gato AND (preto OR cão)"),# Deve trazer Doc 1 e 3
-            ("Campos Extra", "Joao 2022")             # Testar se procura em autores e anos
-        ]
-
-    print("\n--- RESULTADOS DOS TESTES ---")
-    for nome, query in testes:
-        resultado = modelo.executar_pesquisa(query)
-        print(f"{nome} [{query}]: {resultado}")
-
-if __name__ == "__main__":
-    teste_booleano()
+print(modelo.executar_pesquisa("   cancer"))
+print(modelo.executar_pesquisa("cancer treatment"))
+print(modelo.executar_pesquisa("cancer NOT treatment"))
+print(modelo.executar_pesquisa("(cancer AND diagnosis) OR heart"))
+print(modelo.executar_pesquisa("    "))

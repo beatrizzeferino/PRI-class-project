@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Estilos adicionais para os novos filtros */
         .tfidf-extra-filters {
             background: #f9f9f9;
             padding: 15px;
@@ -34,6 +33,71 @@
         .hidden {
             display: none !important;
         }
+
+        /* Cartão de resultado */
+        .result-card {
+            background: #fff;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 20px 24px;
+            margin-bottom: 18px;
+            transition: box-shadow 0.2s;
+        }
+        .result-card:hover {
+            box-shadow: 0 2px 12px rgba(0,0,0,0.09);
+        }
+        .result-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin: 0 0 6px 0;
+            line-height: 1.4;
+        }
+        .result-title a {
+            color: #8b0000;
+            text-decoration: none;
+        }
+        .result-title a:hover {
+            text-decoration: underline;
+        }
+        .result-authors {
+            font-size: 0.88rem;
+            color: #555;
+            margin: 0 0 10px 0;
+        }
+        .result-abstract {
+            font-size: 0.92rem;
+            color: #333;
+            line-height: 1.6;
+            margin: 0 0 14px 0;
+        }
+        .result-metadata {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        .result-metadata .pdf-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: #8b0000;
+            font-weight: 600;
+            text-decoration: none;
+            border: 1px solid #ffcccc;
+            padding: 2px 10px;
+            border-radius: 4px;
+            background: #fff0f0;
+            transition: background 0.15s;
+        }
+        .result-metadata .pdf-link:hover {
+            background: #ffe0e0;
+        }
+        .result-metadata .doi-tag {
+            color: #888;
+            font-size: 0.82rem;
+        }
     </style>
 </head>
 <body>
@@ -55,7 +119,6 @@
     <div class="results-layout">
         <aside class="filters-sidebar">
             <h3>Configurações</h3>
-            
             <div class="filter-group">
                 <label for="algorithm">Algoritmo de Pesquisa</label>
                 <select id="algorithm" class="algo-select">
@@ -117,7 +180,6 @@
             <div id="search-stats" class="search-stats">
                 A carregar resultados...
             </div>
-            
             <div id="results-container">
                 <!-- Os resultados serão inseridos aqui via JS -->
             </div>
@@ -125,7 +187,6 @@
     </div>
 
     <script>
-        // Inicialização ao carregar a página
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const query = urlParams.get('query');
@@ -138,7 +199,6 @@
                 performSearch(query, method);
             }
 
-            // Listeners para os sliders de ano
             const minSlider = document.getElementById('year-min');
             const maxSlider = document.getElementById('year-max');
             const minVal = document.getElementById('year-min-val');
@@ -154,18 +214,15 @@
                 maxVal.textContent = maxSlider.value;
             });
 
-            // Disparar nova pesquisa ao soltar o slider
             [minSlider, maxSlider].forEach(slider => {
                 slider.addEventListener('change', () => triggerSearch());
             });
 
-            // Listener para mudança de algoritmo
             document.getElementById('algorithm').addEventListener('change', function() {
                 toggleTfIdfOptions(this.value);
                 triggerSearch();
             });
 
-            // Listeners para checkboxes e selects extras
             document.querySelectorAll('input[type="checkbox"], #tf-weighting, #idf-weighting').forEach(el => {
                 el.addEventListener('change', () => triggerSearch());
             });
@@ -196,28 +253,22 @@
 
             const stats = document.getElementById('search-stats');
             const container = document.getElementById('results-container');
-            
+
             stats.textContent = "A pesquisar...";
 
-            // Capturar filtros
-            const stemming = document.getElementById('stemming').checked;
+            const stemming    = document.getElementById('stemming').checked;
             const lematizacao = document.getElementById('lematizacao').checked;
-            const stopwords = document.getElementById('stopwords').checked;
-            const yearMin = document.getElementById('year-min').value;
-            const yearMax = document.getElementById('year-max').value;
-            
-            const tfWeighting = document.getElementById('tf-weighting').value;
+            const stopwords   = document.getElementById('stopwords').checked;
+            const yearMin     = document.getElementById('year-min').value;
+            const yearMax     = document.getElementById('year-max').value;
+            const tfWeighting  = document.getElementById('tf-weighting').value;
             const idfWeighting = document.getElementById('idf-weighting').value;
 
-            // Construir URL
             const params = new URLSearchParams({
-                query: query,
-                method: method,
+                query, method,
                 year_min: yearMin,
                 year_max: yearMax,
-                stemming: stemming,
-                lematizacao: lematizacao,
-                stopwords: stopwords,
+                stemming, lematizacao, stopwords,
                 tf_weighting: tfWeighting,
                 idf_weighting: idfWeighting
             });
@@ -226,8 +277,9 @@
                 const response = await fetch(`http://127.0.0.1:8000/search?${params}`);
                 const data = await response.json();
 
-                stats.textContent = `Encontrados ${data.results.length} resultados para "${query}" (${method})`;
-                
+                const methodLabel = { boolean: 'Booleano', tfidf_custom: 'TF-IDF Personalizado', tfidf_sklearn: 'TF-IDF Sklearn' }[method] || method;
+                stats.textContent = `Encontrados ${data.results.length} resultado(s) para "${query}" (${methodLabel})`;
+
                 container.innerHTML = "";
                 if (data.results.length === 0) {
                     container.innerHTML = "<p class='no-results'>Não foram encontrados documentos para esta pesquisa.</p>";
@@ -237,17 +289,52 @@
                 data.results.forEach(doc => {
                     const card = document.createElement('div');
                     card.className = 'result-card';
-                    
-                    const scoreHtml = doc.score ? `<span class="score-tag">Score: ${doc.score.toFixed(4)}</span>` : '';
-                    
+
+                    // Título — usa o campo 'title' mapeado pela app.py
+                    const title = doc.title && doc.title !== doc.doi
+                        ? doc.title
+                        : (doc.doi || 'Sem título');
+
+                    // Abstract — mostra até 300 caracteres
+                    const abstract = doc.abstract
+                        ? doc.abstract.substring(0, 300) + (doc.abstract.length > 300 ? '...' : '')
+                        : 'Sem resumo disponível.';
+
+                    // Autores
+                    let authorsText = '';
+                    if (Array.isArray(doc.authors) && doc.authors.length > 0) {
+                        authorsText = doc.authors.join(', ');
+                    } else if (typeof doc.authors === 'string' && doc.authors) {
+                        authorsText = doc.authors;
+                    }
+
+                    // Ano
+                    const year = doc.year || 'N/A';
+
+                    // Score
+                    const scoreHtml = doc.score !== undefined
+                        ? `<span class="score-tag">Score: ${doc.score.toFixed(4)}</span>`
+                        : '';
+
+                    // Link PDF
+                    const pdfHtml = doc.link
+                        ? `<a class="pdf-link" href="${doc.link}" target="_blank"><i class="fa-solid fa-file-pdf"></i> PDF</a>`
+                        : '';
+
+                    // DOI
+                    const doiHtml = doc.doi
+                        ? `<span class="doi-tag">DOI: ${doc.doi}</span>`
+                        : '';
+
                     card.innerHTML = `
-                        <h3 class="result-title"><a href="#">${doc.title}</a></h3>
-                        <p class="result-authors">${doc.authors || 'Autores desconhecidos'}</p>
-                        <p class="result-abstract">${doc.abstract ? doc.abstract.substring(0, 300) + '...' : 'Sem resumo.'}</p>
+                        <h3 class="result-title"><a href="${doc.link || '#'}" target="_blank">${title}</a></h3>
+                        ${authorsText ? `<p class="result-authors"><i class="fa-solid fa-user"></i> ${authorsText}</p>` : ''}
+                        <p class="result-abstract">${abstract}</p>
                         <div class="result-metadata">
-                            <span><i class="fa-solid fa-calendar"></i> ${doc.year || 'N/A'}</span>
+                            <span><i class="fa-solid fa-calendar"></i> ${year}</span>
                             ${scoreHtml}
-                            <span style="margin-left: 15px; font-size: 0.85rem; color: #777;">DOI: ${doc.doi || 'N/A'}</span>
+                            ${pdfHtml}
+                            ${doiHtml}
                         </div>
                     `;
                     container.appendChild(card);
