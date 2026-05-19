@@ -92,19 +92,16 @@ def main():
     print(f"\n{'='*60}")
     print(f"✅ Processamento concluído com sucesso!")
 
-    with open("processed_corpus.json", "r", encoding="utf-8") as f:
-        corpus = json.load(f)
-
     #------- Indice Invertido --------------
     indice= IndiceInvertido()
-    indice.construir(documentos_indexados, pasta_textos="textos_processados")
+    indice.construir(documentos_indexados)
     print("Índice construído com sucesso!")
     print(f"Número de documentos: {indice.num_documentos}")
     print(f"Número de termos únicos: {len(indice.indice)}")
 
     #------- MODELO BOOLEANO ---------------
     modelo_booleano= ModeloBooleano(
-        corpus_processado=corpus,
+        corpus_processado=documentos_indexados,
         pasta_tokens_pdf="textos_processados",
         remove_stopwords=remover_sw,
         normalization_method=metodo_norm,
@@ -143,16 +140,16 @@ def main():
         print("Escolhe como queres medir essa importância:\n")
 
         print("1 - Raw TF")
-        print("    -> Usa diretamente o número de vezes que o termo aparece.")
-        print("    -> Simples, mas favorece documentos longos.")
+        print("-> Usa diretamente o número de vezes que o termo aparece.")
+        print("-> Simples, mas favorece documentos longos.")
 
         print("\n2 - Log TF")
-        print("    -> Usa 1 + log(tf).")
-        print("    -> Reduz o impacto de termos muito repetidos.")
+        print("-> Usa 1 + log(tf).")
+        print("-> Reduz o impacto de termos muito repetidos.")
 
         print("\n3 - Augmented TF")
-        print("    -> Normaliza a frequência entre documentos.")
-        print("    -> Evita que documentos longos dominem o ranking.\n")
+        print("-> Normaliza a frequência entre documentos.")
+        print("-> Evita que documentos longos dominem o ranking.\n")
 
         tf_choice = input("Escolha TF (1/2/3): ")
 
@@ -188,8 +185,7 @@ def main():
             "3": "probabilistic"
         }
         modelo_tfidf= TFIDF(indice,
-          documentos=corpus,
-          pasta_tokens_pdf="textos_processados",
+          documentos=documentos_indexados,
           tf_scheme=tf_map[tf_choice],
           idf_scheme=idf_map[idf_choice],
           remove_stopwords=remover_sw,
@@ -198,6 +194,8 @@ def main():
         )
         matriz= modelo_tfidf.gerar_matriz_similaridade()
         #print(matriz)
+        
+        
 
     elif escolha =="2":
         modelo_tfidf= TFIDF_Sklearn(

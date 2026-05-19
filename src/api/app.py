@@ -1,308 +1,116 @@
 import json
 import os
+import tempfile
 from fastapi import FastAPI, Query
 from typing import List, Dict
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
- 
+
 # Imports das classes locais
 from src.search.booleano import ModeloBooleano
+from src.search.tfidf import TFIDF, TFIDF_Sklearn
 from src.search.corpusProcessor import CorpusProcessor
-from src.search.tfidf import TFIDFCustom, TFIDFSklearn
- 
-app = FastAPI(
-    title="Motor de Pesquisa — RepositóriUM",
-    description="Motor de IR com modelos Booleano, TF-IDF Custom e TF-IDF sklearn.",
-    version="1.0.0"
-)
- 
-# Configuração de CORS
+
+app = FastAPI()
+
+# Configuração de CORS para permitir comunicação com o Frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
- 
+
 # --- CONFIGURAÇÃO DE CAMINHOS ---
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 FRONTEND_PATH = BASE_DIR / "src" / "frontend"
-DATA_PATH = BASE_DIR / "scraper_results.json"
- 
-# Montar ficheiros estáticos apenas se a pasta existir
-if FRONTEND_PATH.exists():
-    app.mount("/static", StaticFiles(directory=FRONTEND_PATH), name="static")
- 
-# ------------------------------------------------------------------ #
-#  CARREGAMENTO DE DADOS                                              #
-# ------------------------------------------------------------------ #
- 
+DATA_PATH = BASE_DIR / "processed_corpus.json"
+TOKENS_PDF_PATH = BASE_DIR / "textos_processados"
+
+# Montar ficheiros estáticos (CSS, JS)
+app.mount("/static", StaticFiles(directory=FRONTEND_PATH), name="static")
+
+# --------- CARREGAMENTO DE DADOS ---------
 def load_data():
     if not DATA_PATH.exists():
-        print(f"[Aviso] Ficheiro {DATA_PATH} não encontrado. A usar lista vazia.")
+        print(f"ERRO: Ficheiro {DATA_PATH} não encontrado!")
         return []
     with open(DATA_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
- 
-# 1. Dados brutos
+        raw = json.load(f)
+    # processed_corpus.json é um dict {doi: doc} — converter para lista
+    if isinstance(raw, dict):
+        return list(raw.values())
+    return raw
+
+# 1. Carregar dados brutos primeiro (lista de dicts)
 data = load_data()
- 
-# 2. Mapeamento DOI -> documento completo para recuperação rápida
-db_documentos: Dict[str, dict] = {}
-for doc in data:
-    doi = doc.get("doi")
-    if doi and doi != "N/A":
-        db_documentos[doi] = doc
- 
-# ------------------------------------------------------------------ #
-#  INICIALIZAÇÃO DOS MOTORES                                          #
-# ------------------------------------------------------------------ #
- 
-# Parâmetros globais de NLP (podem ser expostos como parâmetros de query)
-NLP_REMOVE_STOPWORDS = True
-NLP_NORMALIZATION = "lemma"
-NLP_LANGUAGE = "english"
- 
-# 3. Processar corpus (partilhado por todos os modelos)
+
+# 2. Criar mapeamento DOI -> Documento para recuperação rápida
+db_documentos = {doc.get('doi'): doc for doc in data if doc.get('doi')}
+
+# 2b. Criar mapeamento TÍTULO -> Documento para o modelo booleano
+db_por_titulo = {doc.get('titulo', '').strip(): doc for doc in data if doc.get('titulo')}
+
+# --------- INICIALIZAÇÃO DOS MOTORES DE BUSCA ---------
+
+# 3. Processar o corpus — o CorpusProcessor lê o ficheiro diretamente e espera
+#    uma lista, por isso usamos um ficheiro temporário com os dados convertidos.
 processor = CorpusProcessor()
-corpus_dict = processor.processar_dataset(
-    str(DATA_PATH),
-    remove_stopwords=NLP_REMOVE_STOPWORDS,
-    normalization_method=NLP_NORMALIZATION
-)
- 
+with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False, encoding='utf-8') as tmp:
+    json.dump(data, tmp, ensure_ascii=False)
+    tmp_path = tmp.name
+
+corpus_dict = processor.processar_dataset(tmp_path)
+os.remove(tmp_path)
+
 # 4. Modelo Booleano
 modelo_bool = ModeloBooleano(
     corpus_processado=corpus_dict,
-    remove_stopwords=NLP_REMOVE_STOPWORDS,
-    normalization_method=NLP_NORMALIZATION,
-    language=NLP_LANGUAGE
+    pasta_tokens_pdf=str(TOKENS_PDF_PATH),
+    remove_stopwords=True,
+    normalization_method='lemma',
+    language='english'
 )
-# BUGFIX: construir_matriz() não recebe argumentos
 modelo_bool.construir_matriz()
- 
-# 5. TF-IDF Custom
-modelo_tfidf_custom = TFIDFCustom(
-    remove_stopwords=NLP_REMOVE_STOPWORDS,
-    normalization_method=NLP_NORMALIZATION,
-    language=NLP_LANGUAGE
-)
-modelo_tfidf_custom.construir(corpus_dict)
- 
-# 6. TF-IDF sklearn
+
+# 5. Índice Invertido — necessário para o TFIDF personalizado
 try:
-    modelo_tfidf_sklearn = TFIDFSklearn(
-        remove_stopwords=NLP_REMOVE_STOPWORDS,
-        normalization_method=NLP_NORMALIZATION,
-        language=NLP_LANGUAGE
-    )
-    modelo_tfidf_sklearn.construir(corpus_dict)
-    SKLEARN_DISPONIVEL = True
+    from src.search.indice import IndiceInvertido
+    indice = IndiceInvertido()
+    indice.construir_de_indexer(corpus_dict)
+    _indice_disponivel = True
+    print("[OK] Índice invertido construído com sucesso.")
 except Exception as e:
-    print(f"[Aviso] sklearn não disponível: {e}")
-    modelo_tfidf_sklearn = None
-    SKLEARN_DISPONIVEL = False
- 
-AVAILABLE_METHODS = ["boolean", "tfidf_custom"] + (["sklearn"] if SKLEARN_DISPONIVEL else [])
- 
-# ------------------------------------------------------------------ #
-#  ROTAS DE NAVEGAÇÃO                                                 #
-# ------------------------------------------------------------------ #
- 
-@app.get("/", include_in_schema=False)
-def read_index():
-    index_file = FRONTEND_PATH / "index.html"
-    if index_file.exists():
-        return FileResponse(str(index_file))
-    return {"message": "Frontend não encontrado. Use /docs para a API."}
- 
-@app.get("/results", include_in_schema=False)
-def read_results():
-    results_file = FRONTEND_PATH / "results.html"
-    if results_file.exists():
-        return FileResponse(str(results_file))
-    return {"message": "Frontend não encontrado."}
- 
-# ------------------------------------------------------------------ #
-#  FUNÇÕES DE PESQUISA                                                #
-# ------------------------------------------------------------------ #
- 
-def _doc_id_to_full(doc_id: str, score: float) -> dict | None:
-    """
-    Converte um doc_id no documento completo (com score).
-    Tenta primeiro por DOI direto; caso contrário, percorre o corpus_dict
-    para obter os metadados.
-    """
-    # Tentar via db_documentos (indexed por DOI)
-    if doc_id in db_documentos:
-        doc = db_documentos[doc_id].copy()
-        doc["score"] = score
-        return doc
- 
-    # Fallback: usar metadados do corpus_dict
-    if doc_id in corpus_dict:
-        info = corpus_dict[doc_id]
-        doc = {
-            "doi":      doc_id,
-            "title":    info.get("titulo", ""),
-            "authors":  info.get("autores", []),
-            "year":     info.get("ano", ""),
-            "url":      info.get("url", ""),
-            "abstract": "",
-            "score":    score
-        }
-        return doc
- 
-    return None
- 
- 
-def boolean_search(query: str) -> List[Dict]:
-    """Pesquisa booleana — devolve relevância binária (score = 1.0)."""
-    if not query.strip():
-        return []
- 
-    try:
-        doc_ids_encontrados = modelo_bool.executar_pesquisa(query)
-        results = []
-        for doc_id in doc_ids_encontrados:
-            doc = _doc_id_to_full(doc_id, score=1.0)
-            if doc:
-                results.append(doc)
-        return results
-    except Exception as e:
-        print(f"[Erro] Motor booleano: {e}")
-        return []
- 
- 
-def tfidf_custom_search(query: str) -> List[Dict]:
-    """Pesquisa TF-IDF com implementação própria, ordenada por similaridade do cosseno."""
-    if not query.strip():
-        return []
- 
-    try:
-        resultados = modelo_tfidf_custom.pesquisar(query)
-        docs = []
-        for r in resultados:
-            doc = _doc_id_to_full(r["doc_id"], score=r["score"])
-            if doc:
-                docs.append(doc)
-        return docs
-    except Exception as e:
-        print(f"[Erro] TF-IDF Custom: {e}")
-        return []
- 
- 
-def sklearn_search(query: str) -> List[Dict]:
-    """Pesquisa TF-IDF com scikit-learn, ordenada por similaridade do cosseno."""
-    if not query.strip() or modelo_tfidf_sklearn is None:
-        return tfidf_custom_search(query)  # fallback para custom se sklearn indisponível
- 
-    try:
-        resultados = modelo_tfidf_sklearn.pesquisar(query)
-        docs = []
-        for r in resultados:
-            doc = _doc_id_to_full(r["doc_id"], score=r["score"])
-            if doc:
-                docs.append(doc)
-        return docs
-    except Exception as e:
-        print(f"[Erro] TF-IDF sklearn: {e}")
-        return []
- 
- 
-# ------------------------------------------------------------------ #
-#  ROUTER DE ALGORITMOS                                               #
-# ------------------------------------------------------------------ #
- 
-METHOD_MAP = {
-    "boolean":      boolean_search,
-    "tfidf_custom": tfidf_custom_search,
-    "sklearn":      sklearn_search,
-}
- 
-def run_algorithm(query: str, method: str) -> List[Dict]:
-    func = METHOD_MAP.get(method, boolean_search)
-    return func(query)
- 
-# ------------------------------------------------------------------ #
-#  ENDPOINT PRINCIPAL DE PESQUISA                                     #
-# ------------------------------------------------------------------ #
- 
-@app.get("/search", summary="Pesquisa de documentos")
-def search(
-    query: str = Query(..., description="Texto ou expressão booleana a pesquisar"),
-    method: str = Query("boolean", description="Algoritmo: boolean | tfidf_custom | sklearn"),
-    year_min: int = Query(1950, description="Ano mínimo de publicação"),
-    year_max: int = Query(2026, description="Ano máximo de publicação")
-):
-    """
-    Pesquisa documentos no corpus com o algoritmo selecionado.
-    Aplica filtro por intervalo de anos e devolve no máximo 50 resultados.
-    """
-    base_results = run_algorithm(query, method)
- 
-    final_results = []
-    for doc in base_results:
-        raw_year = doc.get("year", "0")
-        doc_year = 0
- 
-        if raw_year:
-            if isinstance(raw_year, list) and len(raw_year) > 0:
-                raw_year = str(raw_year[0])
-            else:
-                raw_year = str(raw_year)
- 
-            digits_only = "".join(filter(str.isdigit, raw_year))
- 
-            if len(digits_only) >= 4:
-                doc_year = int(digits_only[:4])
-            elif digits_only:
-                doc_year = int(digits_only)
- 
-        if doc_year == 0 or (year_min <= doc_year <= year_max):
-            final_results.append(doc)
- 
-    return {
-        "query":   query,
-        "method":  method,
-        "total":   len(final_results),
-        "results": final_results[:50]
-    }
- 
-# ------------------------------------------------------------------ #
-#  OUTROS ENDPOINTS                                                   #
-# ------------------------------------------------------------------ #
- 
-@app.get("/document/{doi:path}", summary="Detalhes de um documento por DOI")
-def get_document(doi: str):
-    """Devolve os metadados completos de um documento pelo seu DOI."""
-    doc = db_documentos.get(doi)
-    if doc:
-        return doc
-    return {"error": f"Documento '{doi}' não encontrado."}
- 
- 
-@app.get("/algorithms", summary="Algoritmos disponíveis")
-def get_algorithms():
-    """Lista os algoritmos de pesquisa disponíveis."""
-    return {"algorithms": AVAILABLE_METHODS}
- 
- 
-@app.get("/stats", summary="Estatísticas do índice")
-def get_stats():
-    """Devolve estatísticas gerais sobre o corpus carregado."""
-    return {
-        "total_documentos": len(corpus_dict),
-        "total_termos_vocab_custom": len(modelo_tfidf_custom.vocab),
-        "sklearn_disponivel": SKLEARN_DISPONIVEL,
-        "metodos_disponiveis": AVAILABLE_METHODS
-    }
- 
+    print(f"[AVISO] Erro ao carregar índice: {e}")
+    indice = None
+    _indice_disponivel = False
 
+# 6. TF-IDF personalizado (usa o índice invertido)
+if _indice_disponivel:
+    modelo_tfidf_custom = TFIDF(
+        indice=indice,
+        documentos=corpus_dict,
+        pasta_tokens_pdf=str(TOKENS_PDF_PATH),
+        tf_scheme="log",
+        idf_scheme="standard",
+        remove_stopwords=True,
+        normalization_method="lemma",
+        language="english"
+    )
+else:
+    modelo_tfidf_custom = None
 
-AVAILABLE_METHODS = ["tfidf_custom", "sklearn", "boolean"]
+# 7. TF-IDF Sklearn
+modelo_tfidf_sklearn = TFIDF_Sklearn(
+    documentos_processados=corpus_dict,
+    remove_stopwords=True,
+    normalization_method="lemma",
+    language="english"
+)
+
+AVAILABLE_METHODS = ["tfidf_custom", "tfidf_sklearn", "boolean"]
 
 # --------- ROTAS DE NAVEGAÇÃO ---------
 @app.get("/")
@@ -313,71 +121,102 @@ def read_index():
 def read_results():
     return FileResponse(str(FRONTEND_PATH / "results.html"))
 
+# --------- CACHE PARA MODELOS ---------
+_matriz_cache = {}
+
+# --------- FUNÇÕES AUXILIARES ---------
+def _enrich_results(ranking, max_results=50):
+    """
+    Recebe uma lista de (doc_id, score) e devolve os documentos enriquecidos
+    com os metadados disponíveis e o score.
+    Os campos do corpus processado são: titulo, abstrato, autores, ano, doi, link.
+    Mapeamos para os nomes que o frontend espera: title, abstract, authors, year, doi, link.
+    """
+    results = []
+    for doc_id, score in ranking[:max_results]:
+        meta = db_documentos.get(str(doc_id), {})
+        enriched = dict(meta) if meta else {"doi": doc_id}
+        enriched["score"] = round(float(score), 4)
+
+        # Mapear campos do corpus (português) para nomes usados no frontend (inglês)
+        enriched["title"]    = enriched.get("titulo") or doc_id
+        enriched["abstract"] = enriched.get("abstrato") or ""
+        enriched["authors"]  = enriched.get("autores") or ""
+        enriched["year"]     = enriched.get("ano") or ""
+        enriched["link"]     = enriched.get("link") or enriched.get("url") or ""
+        enriched.setdefault("doi", doc_id)
+
+        results.append(enriched)
+    return results
+
 # --------- FUNÇÕES DE PESQUISA ---------
 
-def tfidf_custom_search(query: str):
-    query_l = query.lower()
-    results = [doc for doc in data if query_l in doc.get("title", "").lower() or query_l in doc.get("abstract", "").lower()]
-    for i, r in enumerate(results):
-        r["score"] = 0.99 - (i * 0.001)
-    return results
-
-def sklearn_search(query: str):
-    query_l = query.lower()
-    results = [doc for doc in data if query_l in doc.get("title", "").lower()]
-    for r in results:
-        r["score"] = 0.88
-    return results
-
-def boolean_search(query: str) -> List[Dict]:
-    """Lógica para o modelo Booleano usando DOIs"""
-    if not query.strip():
+def tfidf_custom_search(query: str, remove_sw: bool, norm: str, tf_w: str, idf_w: str):
+    """TF-IDF implementado de raiz com suporte a diferentes esquemas de peso."""
+    if modelo_tfidf_custom is None:
+        print("[ERRO] TF-IDF personalizado indisponível.")
         return []
-    
-    try:
-        # executar_pesquisa devolve uma lista de DOIs[cite: 8]
-        dois_encontrados = modelo_bool.executar_pesquisa(query)
-        
-        # Converter DOIs nos documentos completos usando o mapeamento db_documentos
-        results = []
-        for doi in dois_encontrados:
-            if doi in db_documentos:
-                doc = db_documentos[doi].copy()
-                doc["score"] = 1.0  # Relevância binária[cite: 12]
-                results.append(doc)
-        return results
-    except Exception as e:
-        print(f"Erro no motor booleano: {e}")
-        return []
+
+    modelo_tfidf_custom.remove_stopwords = remove_sw
+    modelo_tfidf_custom.normalization_method = norm
+    modelo_tfidf_custom.tf_scheme = tf_w
+    modelo_tfidf_custom.idf_scheme = idf_w
+
+    ranking = modelo_tfidf_custom.rank_documentos(query)
+    return _enrich_results(ranking)
+
+
+def tfidf_sklearn_search(query: str, remove_sw: bool, norm: str):
+    """TF-IDF com scikit-learn."""
+    modelo_tfidf_sklearn.remove_stopwords = remove_sw
+    modelo_tfidf_sklearn.normalization_method = norm
+
+    ranking = modelo_tfidf_sklearn.rank_documentos(query)
+    return _enrich_results(ranking)
+
+
+def boolean_search(query: str, remove_sw: bool, norm: str):
+    """Pesquisa booleana. O ModeloBooleano devolve doc_ids (DOIs)."""
+    modelo_bool.remove_stopwords = remove_sw
+    modelo_bool.normalization_method = norm
+
+    doc_ids = modelo_bool.executar_pesquisa(query)
+
+    # Booleano não tem score contínuo — usamos 1.0 para todos
+    ranking = [(doc_id, 1.0) for doc_id in doc_ids]
+    return _enrich_results(ranking)
+
 
 # --------- ROUTER DE ALGORITMOS ---------
-METHOD_MAP = {
-    "tfidf_custom": tfidf_custom_search,
-    "sklearn": sklearn_search,
-    "boolean": boolean_search
-}
+def run_algorithm(query: str, method: str, remove_sw: bool, norm: str, tf_w: str, idf_w: str):
+    if method == "boolean":
+        return boolean_search(query, remove_sw, norm)
+    elif method == "tfidf_custom":
+        return tfidf_custom_search(query, remove_sw, norm, tf_w, idf_w)
+    elif method == "tfidf_sklearn":
+        return tfidf_sklearn_search(query, remove_sw, norm)
+    return []
 
-def run_algorithm(query: str, method: str):
-    func = METHOD_MAP.get(method)
-    # Se não encontrar o método ou for inválido, usa o booleano como padrão
-    if not func:
-        return boolean_search(query)
-    return func(query)
 
 # --------- ENDPOINT PRINCIPAL DE PESQUISA ---------
 @app.get("/search")
 def search(
     query: str = Query(...),
-    method: str = Query("boolean"),
+    method: str = Query("tfidf_sklearn"),
     year_min: int = Query(1950),
-    year_max: int = Query(2026)
+    year_max: int = Query(2026),
+    stemming: bool = Query(False),
+    lematizacao: bool = Query(True),
+    stopwords: bool = Query(True),
+    tf_weighting: str = Query("raw"),
+    idf_weighting: str = Query("idf")
 ):
-    # 1. Obter resultados brutos do algoritmo selecionado[cite: 12]
-    base_results = run_algorithm(query, method)
-    
+    norm_method = 'stem' if stemming else ('lemma' if lematizacao else None)
+
+    base_results = run_algorithm(query, method, stopwords, norm_method, tf_weighting, idf_weighting)
+
     final_results = []
-    
-    # 2. Processar metadados e aplicar filtros de ano[cite: 12]
+
     for doc in base_results:
         raw_year = doc.get("year", "0")
         doc_year = 0
@@ -388,24 +227,24 @@ def search(
             else:
                 raw_year = str(raw_year)
 
-            # Limpar string para obter apenas dígitos (ex: "2023-10" -> "202310")
             digits_only = "".join(filter(str.isdigit, raw_year))
-            
-            # Extrair o ano (primeiros 4 dígitos)[cite: 12]
+
             if len(digits_only) >= 4:
                 doc_year = int(digits_only[:4])
             elif digits_only:
                 doc_year = int(digits_only)
 
-        # 3. Filtragem por intervalo de anos[cite: 12]
         if doc_year == 0 or (year_min <= doc_year <= year_max):
             final_results.append(doc)
+
+    print(f"[SEARCH] Query: '{query}' | Resultados após filtro: {len(final_results)}")
 
     return {
         "query": query,
         "method": method,
-        "results": final_results[:50] # Limitar a 50 para performance
+        "results": final_results[:50]
     }
+
 
 # --------- OUTROS ENDPOINTS ---------
 @app.get("/document/{doi}")
