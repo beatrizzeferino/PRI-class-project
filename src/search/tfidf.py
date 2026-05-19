@@ -1,14 +1,16 @@
 import math
+import os
 from src.search.nlp import TextProcessor
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 class TFIDF:
-    def __init__(self, indice, documentos, tf_scheme, idf_scheme, remove_stopwords, normalization_method, language):
+    def __init__(self, indice, documentos, pasta_tokens_pdf, tf_scheme, idf_scheme, remove_stopwords, normalization_method, language):
         self.indice = indice
         self.documentos= documentos # output do CorpusProcessor
         self.N= indice.num_documentos #numero total de documentos no corpus
+        self.pasta_tokens_pdf = pasta_tokens_pdf
 
         #weighting schemes escolhidos pelo utilizador
         self.tf_scheme= tf_scheme
@@ -20,6 +22,32 @@ class TFIDF:
         self.language = language
 
         self.nlp = TextProcessor()
+    
+    def carregar_tokens_documento(self, doc_id):
+        """
+        Junta os tokens do corpus processado com os tokens do PDF processado.
+        """
+
+        tokens = list(self.documentos[doc_id].get("tokens_pesquisa", []))
+
+        safe_id = str(doc_id).replace("/", "_").replace("\\", "_")
+
+        caminho_pdf = os.path.join(
+            self.pasta_tokens_pdf,
+            f"{safe_id}_tokens.txt"
+        )
+
+        if os.path.exists(caminho_pdf):
+            try:
+                with open(caminho_pdf, "r", encoding="utf-8") as f:
+                    tokens_pdf = f.read().split()
+
+                tokens.extend(tokens_pdf)
+
+            except Exception as e:
+                print(f"[Erro TFIDF PDF] {doc_id}: {e}")
+
+        return tokens
     
     def calcular_tf_score(self, tf):
         """
@@ -219,7 +247,7 @@ class TFIDF:
         vetores={} #vetores de todos os documentos
 
         for doc_id in docs:
-            termos= self.documentos[doc_id]["tokens_pesquisa"]
+            termos= self.carregar_tokens_documento(doc_id)
             vetores[doc_id] = self.vetor_tfidf_documento(doc_id, termos)
         
         #calcular similaridades
