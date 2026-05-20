@@ -180,3 +180,16 @@ body {
 .score-badge { position: absolute; right: 0; top: 20px; color: var(--primary-red); font-weight: bold; font-size: 0.8rem; background: #fff5f5; padding: 3px 8px; border: 1px solid var(--primary-red); border-radius: 4px; }
 .pdf-link { color: var(--primary-red); font-weight: bold; text-decoration: none; }
 .edu-box { background: #fdf2f2; padding: 10px; border-left: 3px solid var(--primary-red); margin-top: 20px; }
+
+.info-icon {
+    margin-left: 6px;
+    color: #8b0000;
+    cursor: pointer;
+    font-size: 0.85rem;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+}
+
+.info-icon:hover {
+    opacity: 1;
+}

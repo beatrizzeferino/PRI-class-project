@@ -118,64 +118,110 @@
 
     <div class="results-layout">
         <aside class="filters-sidebar">
-            <h3>Configurações</h3>
-            <div class="filter-group">
-                <label for="algorithm">Algoritmo de Pesquisa</label>
-                <select id="algorithm" class="algo-select">
-                    <option value="boolean">Booleano</option>
-                    <option value="tfidf_custom">TF-IDF Personalizado</option>
-                    <option value="tfidf_sklearn">TF-IDF (Sklearn)</option>
+    <h3>Configurações</h3>
+    <div class="filter-group">
+        <label for="algorithm">
+            Algoritmo de Pesquisa
+            <i class="fa-solid fa-circle-info info-icon"
+            title="Booleano: usa operadores AND/OR/NOT.
+        TF-IDF Personalizado: usa pesos TF e IDF configuráveis.
+        TF-IDF Sklearn: versão otimizada usando a biblioteca Scikit-learn.">
+            </i>
+        </label>
+        <select id="algorithm" class="algo-select">
+            <option value="boolean">Booleano</option>
+            <option value="tfidf_custom">TF-IDF Personalizado</option>
+            <option value="tfidf_sklearn">TF-IDF (Sklearn)</option>
+        </select>
+    </div>
+
+    <div id="tfidf-custom-options" class="tfidf-extra-filters hidden">
+        <h4>Pesos TF-IDF</h4>
+        <div class="filter-group">
+            <label>
+                Esquema TF
+                <i class="fa-solid fa-circle-info info-icon"
+                title="Define como a frequência do termo é calculada no documento.">
+                </i>
+            </label>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <select id="tf-weighting" class="algo-select">
+                    <option value="raw">Raw Count (Frequência)</option>
+                    <option value="log">Logarithmic (1 + log tf)</option>
+                    <option value="binary">Binary (0 ou 1)</option>
+                    <option value="augmented">Augmented</option>
                 </select>
-            </div>
 
-            <!-- Filtros Extra para TF-IDF Personalizado -->
-            <div id="tfidf-custom-options" class="tfidf-extra-filters hidden">
-                <h4>Pesos TF-IDF</h4>
-                <div class="filter-group">
-                    <label>Esquema TF</label>
-                    <select id="tf-weighting" class="algo-select">
-                        <option value="raw">Raw Count (Frequência)</option>
-                        <option value="log">Logarithmic (1 + log tf)</option>
-                        <option value="binary">Binary (0 ou 1)</option>
-                        <option value="augmented">Augmented</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Esquema IDF</label>
-                    <select id="idf-weighting" class="algo-select">
-                        <option value="standard">Standard IDF</option>
-                        <option value="smooth">Smooth IDF</option>
-                        <option value="probabilistic">Probabilistic IDF</option>
-                    </select>
-                </div>
+                <i class="fa-solid fa-circle-info info-icon"
+                title="Raw: frequência normal.
+            Log: reduz impacto de palavras repetidas.
+            Binary: apenas presença ou ausência.
+            Augmented: normaliza pela frequência máxima do documento.">
+                </i>
             </div>
+            </div>
+        
+        <div class="filter-group">
+            <label>
+                Esquema IDF
+                <i class="fa-solid fa-circle-info info-icon"
+                title="Define como a raridade dos termos é penalizada na coleção de documentos.">
+                </i>
+            </label>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <select id="idf-weighting" class="algo-select">
+                    <option value="standard">Standard IDF</option>
+                    <option value="smooth">Smooth IDF</option>
+                    <option value="probabilistic">Probabilistic IDF</option>
+                </select>
 
-            <div class="filter-group">
-                <label>Processamento de Texto</label>
-                <div class="checkbox-group">
-                    <label class="checkbox-item">
-                        <input type="checkbox" id="stemming" checked onchange="gerirCheckboxes('stemming')"> Stemming
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" id="lematizacao" onchange="gerirCheckboxes('lematizacao')"> Lematização
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" id="stopwords" onchange="gerirCheckboxes('stopwords')"> Remover Stopwords
-                    </label>
-                </div>
+                <i class="fa-solid fa-circle-info info-icon"
+                title="Standard: IDF clássico.
+            Smooth: evita divisões por zero.
+            Probabilistic: penaliza termos muito frequentes.">
+                </i>
             </div>
+            </div>
+    </div>
 
-            <div class="filter-group">
-                <label>Ano de Publicação</label>
-                <div class="range-slider-container">
-                    <input type="range" id="year-min" min="1950" max="2026" value="1950">
-                    <input type="range" id="year-max" min="1950" max="2026" value="2026">
-                </div>
-                <div class="range-values">
-                    <span id="year-min-val">1950</span> - <span id="year-max-val">2026</span>
-                </div>
-            </div>
-        </aside>
+    <div class="filter-group">
+        <label>Processamento de Texto</label>
+        <div class="checkbox-group" style="display: flex; flex-direction: column; gap: 10px; margin-top: 5px;">
+            <label class="checkbox-item">
+                <input type="checkbox" id="stemming" checked onchange="gerirCheckboxes('stemming')">
+                Stemming
+                <i class="fa-solid fa-circle-info info-icon"
+                    title="Reduz palavras ao seu radical. Ex: running → run">
+                </i>
+            </label>
+            
+            <label class="checkbox-item">
+                <input type="checkbox" id="lematizacao" onchange="gerirCheckboxes('lematizacao')">
+                Lematização
+                <i class="fa-solid fa-circle-info info-icon"
+                title="Converte palavras para a sua forma base linguística. Ex: better → good">
+                </i>
+            </label> <label class="checkbox-item">
+                <input type="checkbox" id="stopwords" onchange="gerirCheckboxes('stopwords')">
+                Remover Stopwords
+                <i class="fa-solid fa-circle-info info-icon"
+                title="Remove palavras muito frequentes e pouco relevantes como: de, a, o, and, the...">
+                </i>
+            </label>    
+        </div>
+    </div>
+
+    <div class="filter-group">
+        <label>Ano de Publicação</label>
+        <div class="range-slider-container">
+            <input type="range" id="year-min" min="1950" max="2026" value="1950">
+            <input type="range" id="year-max" min="1950" max="2026" value="2026">
+        </div>
+        <div class="range-values">
+            <span id="year-min-val">1950</span> - <span id="year-max-val">2026</span>
+        </div>
+    </div>
+</aside>
 
         <main class="results-content">
             <div id="search-stats" class="search-stats">
