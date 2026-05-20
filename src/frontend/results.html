@@ -143,9 +143,9 @@
                 <div class="filter-group">
                     <label>Esquema IDF</label>
                     <select id="idf-weighting" class="algo-select">
-                        <option value="idf">Standard IDF</option>
-                        <option value="none">Smooth IDF </option>
-                        <option value="none">Probabilistic IDF </option>
+                        <option value="standard">Standard IDF</option>
+                        <option value="smooth">Smooth IDF</option>
+                        <option value="probabilistic">Probabilistic IDF</option>
                     </select>
                 </div>
             </div>
@@ -154,13 +154,13 @@
                 <label>Processamento de Texto</label>
                 <div class="checkbox-group">
                     <label class="checkbox-item">
-                        <input type="checkbox" id="stemming"> Stemming
+                        <input type="checkbox" id="stemming" checked onchange="gerirCheckboxes('stemming')"> Stemming
                     </label>
                     <label class="checkbox-item">
-                        <input type="checkbox" id="lematizacao" checked> Lematização
+                        <input type="checkbox" id="lematizacao" onchange="gerirCheckboxes('lematizacao')"> Lematização
                     </label>
                     <label class="checkbox-item">
-                        <input type="checkbox" id="stopwords" checked> Remover Stopwords
+                        <input type="checkbox" id="stopwords" onchange="gerirCheckboxes('stopwords')"> Remover Stopwords
                     </label>
                 </div>
             </div>
@@ -188,10 +188,56 @@
     </div>
 
     <script>
+        function gerirCheckboxes(idClicado) {
+            const stemming = document.getElementById('stemming');
+            const lematizacao = document.getElementById('lematizacao');
+            const stopwords = document.getElementById('stopwords');
+
+            // Se o utilizador ativou o Stemming, desliga obrigatoriamente a Lematização
+            if (idClicado === 'stemming' && stemming.checked) {
+                lematizacao.checked = false;
+            }
+            
+            // Se o utilizador ativou a Lematização, desliga obrigatoriamente o Stemming
+            if (idClicado === 'lematizacao' && lematizacao.checked) {
+                stemming.checked = false;
+            }
+
+            // Se preferires que as Stopwords TAMBÉM sejam exclusivas (apenas UMA caixa ativa no total),
+            // descomenta as linhas abaixo:
+            
+            if (idClicado === 'stopwords' && stopwords.checked) {
+                stemming.checked = false;
+                lematizacao.checked = false;
+            }
+            if ((idClicado === 'stemming' || idClicado === 'lematizacao') && document.getElementById(idClicado).checked) {
+                stopwords.checked = false;
+            }
+            
+            // Dispara a pesquisa automaticamente para atualizar os resultados no ecrã
+            triggerSearch();
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const query = urlParams.get('query');
             const method = urlParams.get('method') || 'tfidf_sklearn';
+            
+            // 1. FORÇAR APENAS O STEMMING NO INÍCIO (Desliga as outras caixas)
+            document.getElementById('stemming').checked = true;
+            document.getElementById('lematizacao').checked = false;
+            document.getElementById('stopwords').checked = false;
+
+            // 2. Se a URL trouxe parâmetros específicos de checkboxes (caso venham de um clique anterior)
+            if (urlParams.has('stemming')) {
+                document.getElementById('stemming').checked = urlParams.get('stemming') === 'true';
+            }
+            if (urlParams.has('lematizacao')) {
+                document.getElementById('lematizacao').checked = urlParams.get('lematizacao') === 'true';
+            }
+            if (urlParams.has('stopwords')) {
+                document.getElementById('stopwords').checked = urlParams.get('stopwords') === 'true';
+            }
 
             if (query) {
                 document.getElementById('top-query').value = query;
