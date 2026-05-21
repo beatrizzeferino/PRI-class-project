@@ -420,7 +420,7 @@
                         : '';
 
                     card.innerHTML = `
-                        <h3 class="result-title"><a href="${doc.link || '#'}" target="_blank">${title}</a></h3>
+                        <h3 class="result-title"><a href="${doc.url || '#'}" target="_blank">${title}</a></h3>
                         ${authorsText ? `<p class="result-authors"><i class="fa-solid fa-user"></i> ${authorsText}</p>` : ''}
                         <p class="result-abstract">${abstract}</p>
                         <div class="result-metadata">
