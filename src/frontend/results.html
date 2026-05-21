@@ -103,7 +103,7 @@
 <body>
     <header class="results-header">
         <div class="header-content">
-            <h2 class="mini-logo" style="cursor:pointer" onclick="window.location.href='/'">Repositório<span>UM</span></h2>
+            <h2 class="mini-logo" style="cursor:pointer" onclick="window.location.href='/'"> <img src="/static/repositorium.png" alt="RepositórioUM" class="logo-img" width="100" height="52"></h2>
             <form action="#" class="search-box-top" onsubmit="handleTopSearch(event)">
                 <input type="text" id="top-query" name="query" placeholder="Pesquisar...">
                 <button type="submit">
@@ -252,12 +252,14 @@
             // Se preferires que as Stopwords TAMBÉM sejam exclusivas (apenas UMA caixa ativa no total),
             // descomenta as linhas abaixo:
             
-            if (idClicado === 'stopwords' && stopwords.checked) {
-                stemming.checked = false;
+           // Se o utilizador ativou o Stemming, desliga obrigatoriamente a Lematização
+            if (idClicado === 'stemming' && stemming.checked) {
                 lematizacao.checked = false;
             }
-            if ((idClicado === 'stemming' || idClicado === 'lematizacao') && document.getElementById(idClicado).checked) {
-                stopwords.checked = false;
+            
+            // Se o utilizador ativou a Lematização, desliga obrigatoriamente o Stemming
+            if (idClicado === 'lematizacao' && lematizacao.checked) {
+                stemming.checked = false;
             }
             
             // Dispara a pesquisa automaticamente para atualizar os resultados no ecrã
@@ -420,7 +422,7 @@
                         : '';
 
                     card.innerHTML = `
-                        <h3 class="result-title"><a href="${doc.link || '#'}" target="_blank">${title}</a></h3>
+                        <h3 class="result-title"><a href="${doc.url || '#'}" target="_blank">${title}</a></h3>
                         ${authorsText ? `<p class="result-authors"><i class="fa-solid fa-user"></i> ${authorsText}</p>` : ''}
                         <p class="result-abstract">${abstract}</p>
                         <div class="result-metadata">
