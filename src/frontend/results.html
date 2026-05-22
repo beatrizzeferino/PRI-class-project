@@ -248,16 +248,15 @@
             if (idClicado === 'lematizacao' && lematizacao.checked) {
                 stemming.checked = false;
             }
-
-            // Se preferires que as Stopwords TAMBÉM sejam exclusivas (apenas UMA caixa ativa no total),
-            // descomenta as linhas abaixo:
             
-            if (idClicado === 'stopwords' && stopwords.checked) {
-                stemming.checked = false;
+           // Se o utilizador ativou o Stemming, desliga obrigatoriamente a Lematização
+            if (idClicado === 'stemming' && stemming.checked) {
                 lematizacao.checked = false;
             }
-            if ((idClicado === 'stemming' || idClicado === 'lematizacao') && document.getElementById(idClicado).checked) {
-                stopwords.checked = false;
+            
+            // Se o utilizador ativou a Lematização, desliga obrigatoriamente o Stemming
+            if (idClicado === 'lematizacao' && lematizacao.checked) {
+                stemming.checked = false;
             }
             
             // Dispara a pesquisa automaticamente para atualizar os resultados no ecrã
