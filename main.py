@@ -143,13 +143,17 @@ def main():
         print("-> Usa diretamente o número de vezes que o termo aparece.")
         print("-> Simples, mas favorece documentos longos.")
 
-        print("\n2 - Log TF")
-        print("-> Usa 1 + log(tf).")
-        print("-> Reduz o impacto de termos muito repetidos.")
+        print("\n2 - Binary IDF")
+        print("    -> 1 se tf > 0, caso contrário 0")
+        print("    -> Considera apenas se o termo existe no documento, ignorando repetições.")
 
-        print("\n3 - Augmented TF")
-        print("-> Normaliza a frequência entre documentos.")
-        print("-> Evita que documentos longos dominem o ranking.\n")
+        print("\n3 - Log TF")
+        print("    -> Usa 1 + log(tf).")
+        print("    -> Reduz o impacto de termos muito repetidos.")
+
+        print("\n4 - Augmented TF")
+        print("    -> Normaliza a frequência entre documentos.")
+        print("    -> Evita que documentos longos dominem o ranking.\n")
 
         tf_choice = input("Escolha TF (1/2/3): ")
 
@@ -175,8 +179,9 @@ def main():
         #mapeamento das escolhas
         tf_map = {
             "1": "raw",
-            "2": "log",
-            "3": "augmented"
+            "2": "binary",
+            "3": "log",
+            "4": "augmented"
         }
 
         idf_map = {
