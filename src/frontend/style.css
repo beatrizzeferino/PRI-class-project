@@ -91,7 +91,11 @@ body {
     z-index: 100;
 }
 
-.header-content { display: flex; align-items: center; gap: 30px; }
+.header-content { 
+    display: flex; 
+    align-items: center; 
+    gap: 15px; /* Ajustado para dar um espaçamento melhor */
+}
 
 .mini-logo { font-size: 1.4rem; cursor: pointer; margin: 0; }
 .mini-logo span { color: var(--primary-red); }
@@ -100,28 +104,41 @@ body {
     flex: 1;
     max-width: 600px;
     display: flex;
-    align-items: stretch; /* 🔥 chave */
+    align-items: center;      /* Mudado de stretch para center */
     border: 1px solid var(--border-color);
     border-radius: 4px;
-    overflow: hidden; /* evita cortes estranhos */
+    overflow: hidden; 
+    height: 38px;             /* 🔥 Chave: Define uma altura fixa para a barra */
+    background: white;
 }
 
 .search-box-top input {
     flex: 1;
     border: none;
-    padding: 10px;
+    padding: 0 12px;          /* Padding lateral apenas, a altura é controlada pelo pai */
     outline: none;
-    height: 100%; /* 🔥 garante mesma altura */
+    height: 100%; 
+    font-size: 0.95rem;
+    box-sizing: border-box;
 }
+
 .search-box-top button {
     background: var(--primary-red);
     color: white;
     border: none;
-    padding: 0 15px;
+    padding: 0 18px;          /* Largura interna do botão */
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%; /* 🔥 mesma altura */
+    height: 100%;             /* Ocupa os 38px de altura do pai perfeitamente */
+    cursor: pointer;
+    box-sizing: border-box;
+    font-size: 1rem;
+    transition: background 0.2s;
+}
+
+.search-box-top button:hover {
+    background: var(--dark-red);
 }
 
 .info-icon {
@@ -180,3 +197,16 @@ body {
 .score-badge { position: absolute; right: 0; top: 20px; color: var(--primary-red); font-weight: bold; font-size: 0.8rem; background: #fff5f5; padding: 3px 8px; border: 1px solid var(--primary-red); border-radius: 4px; }
 .pdf-link { color: var(--primary-red); font-weight: bold; text-decoration: none; }
 .edu-box { background: #fdf2f2; padding: 10px; border-left: 3px solid var(--primary-red); margin-top: 20px; }
+
+.info-icon {
+    margin-left: 6px;
+    color: #8b0000;
+    cursor: pointer;
+    font-size: 0.85rem;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+}
+
+.info-icon:hover {
+    opacity: 1;
+}
